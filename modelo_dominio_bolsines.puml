@@ -1,0 +1,215 @@
+@startuml Modelo de Dominio - Bolsines
+
+skinparam classAttributeIconSize 0
+skinparam stereotypeCBackgroundColor LightBlue
+skinparam classBorderColor DarkBlue
+skinparam classBackgroundColor White
+skinparam arrowColor DarkBlue
+
+' ========================
+' ENTITIES
+' ========================
+
+class Provincia <<entity>> {
+  descripcion
+  nombre
+}
+
+class Localidad <<entity>> {
+  descripcion
+  nombre
+}
+
+class Empleado <<entity>> {
+  apellido
+  email
+  nombre
+  esTuCM()
+  getCM()
+  getEmail()
+  mostrarCM()
+  sosGCM()
+}
+
+class Rol <<entity>> {
+  descripcion
+  nombre
+  esGCM()
+}
+
+class TipoDocumento <<entity>> {
+  descripcion
+  nombre
+  getDescripcion()
+  getNombre()
+  new()
+  setDescripcion()
+  setNombre()
+}
+
+class Archivo <<entity>> {
+  nombreArchivo
+  tituloDocumento
+}
+
+class ComisionMedica <<entity>> {
+  codigo
+  direccion
+  email
+  nombre
+  telefono
+  getNombre()
+}
+
+class DetalleRemito <<entity>> {
+  areaCMCDestino
+  aceptarDocumentacion()
+  actualizarEstadoDoc()
+  getDocumentacion()
+  mostrarDocumentacion()
+}
+
+class Documentacion <<entity>> {
+  asunto
+  fechaPase
+  numero
+  aceptar()
+  crearCE()
+  getAsunto()
+  getDatosDocumentacion()
+  mostrarTipoDocumentacion()
+  new()
+  remitar()
+  setEstado()
+}
+
+class Bolsin <<entity>> {
+  fecha
+  numeroBolsin
+  numeroPrecinto
+  peso
+  asociarRemito()
+  crearCEBolsin()
+  esTuCMOrigen()
+  getNroPrecinto()
+  getNumeroBolsin()
+  mostrarDatos()
+  new()
+  obtenerCMDestino()
+  obtenerInformacionRemito()
+  setDetalleBolsin()
+  sosEnviado()
+}
+
+class Remito <<entity>> {
+  fecha
+  número
+  actualizarEstadoDoc()
+  buscarDocumentacion()
+  estasGenerado()
+  getDatosRemito()
+  getNumero()
+  getDocumentacionIncluida()
+  mostrarInformacionRemito()
+  new()
+  setEstado()
+  setEstado()
+  tenesEstaCMDestino()
+  tenesEstaCMOrigen()
+  tomarDocumentacion()
+}
+
+class Estado <<entity>> {
+  ambito
+  descripcion
+  nombre
+  esAmbitoBolsin()
+  esAmbitoDocumentacion()
+  esAmbitoRemito()
+  esEnviado()
+  esRecibidaYAceptada()
+  esRecibidoEnCMDestino()
+  esRecibidoYAceptado()
+  getAmbito()
+  getDescripcion()
+  getNombre()
+  new()
+  setAmbito()
+  setDescripcion()
+  setNombre()
+}
+
+class CambioEstadoDocumentacion <<entity>> {
+  fechaHoraFin
+  fechaHoraInicio
+  new()
+  setFechaHoraFin()
+  sosActual()
+}
+
+class CambioEstadoBolsin <<entity>> {
+  fechaHoraFin
+  fechaHoraInicio
+  new()
+  setFechaHoraFin()
+  sosActual()
+  sosEnviado()
+}
+
+' ========================
+' RELATIONSHIPS
+' ========================
+
+' Provincia - Localidad
+Provincia "1" -- "1" Localidad : provincia
+
+' Localidad - Empleado
+Localidad "1" -- "*" Empleado : asignadoA
+
+' Empleado - Rol
+Empleado "1" -- "1" Rol : rol
+
+' Empleado - ComisionMedica
+Empleado "1" -- "1" ComisionMedica
+
+' ComisionMedica - Documentacion
+ComisionMedica "1" -- "*" Documentacion : documentacion
+
+' ComisionMedica - DetalleRemito (origen/destino)
+ComisionMedica "1" -- "*" DetalleRemito : origen
+ComisionMedica "1" -- "*" DetalleRemito : destino
+
+' Documentacion - TipoDocumento
+Documentacion "*" -- "1" TipoDocumento : tipoDocumento
+
+' Documentacion - Archivo
+Documentacion "1..*" -- "*" Archivo : archivoAdjunto
+
+' Documentacion - ComisionMedica (cmOrigen)
+Documentacion "*" -- "1" ComisionMedica : cmOrigen
+
+' Documentacion - CambioEstadoDocumentacion
+Documentacion "1" -- "1..*" CambioEstadoDocumentacion : cambioEstado
+
+' CambioEstadoDocumentacion - Estado
+CambioEstadoDocumentacion "*" -- "1" Estado : estado
+
+' DetalleRemito - Bolsin
+DetalleRemito "1" -- "1..*" Bolsin : remito
+
+' Bolsin - Remito
+Bolsin "1..*" -- "1" Remito : remito
+
+' Remito - Estado (via CambioEstadoBolsin)
+Remito "1" -- "1..*" CambioEstadoBolsin : cambioEstado
+
+' CambioEstadoBolsin - Estado
+CambioEstadoBolsin "*" -- "1" Estado : estado
+
+' Remito - responsableCE (Empleado)
+Remito "*" -- "1" Empleado : responsableCE
+
+' Documentacion - responsableCE (Empleado)
+CambioEstadoDocumentacion "*" -- "1" Empleado : responsableCE
+
+@enduml

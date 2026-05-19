@@ -1,0 +1,107 @@
+@startuml vista-interaccion
+actor EncargadoDeBolsines as EB
+boundary PantallaRegRecepBolsin as pantalla
+control GestorRegRecepBolsin
+entity "logueado:Empleado" as Empleado
+entity Sesion
+entity Usuario
+entity ComisionMedica
+entity Bolsin
+entity CambioEstadoBolsin
+entity "actual:CambioEstadoBolsin" as estadoActual
+entity "nuevo:CambioEstadoBolsin" as nuevoEstado
+entity Estado
+entity "seleccionado:Bolsin" as bolsinSeleccionado
+entity Remito
+entity DetalleRemito
+entity Documentacion
+entity TipoDocumentacion
+entity "actual:CambioEstadoDocumentacion" as estadoActualDocumentacion
+entity "nuevo:CambioEstadoDocumentacion" as nuevoEstadoDocumentacion
+entity "seleccionado:Remito" as remitoSeleccionado
+entity "seleccionado:DetalleRemito" as detalleRemitoSeleccionado
+entity "seleccionado:Documentacion" as documentacionSeleccionada
+control GestorNotificacionBolsin
+
+EB -> pantalla: opcionRegRecepBolsin()
+pantalla -> GestorRegRecepBolsin ** : regRecepBolsin()
+GestorRegRecepBolsin -> GestorRegRecepBolsin : getEmpleadoLogueado()
+GestorRegRecepBolsin -> Sesion : getUsuarioLogueado()
+Sesion -> Usuario : getUsuario()
+GestorRegRecepBolsin -> Usuario : getEmpleado()
+GestorRegRecepBolsin -> GestorRegRecepBolsin : getCMEmpleado()
+GestorRegRecepBolsin -> Empleado : getCM()
+GestorRegRecepBolsin -> GestorRegRecepBolsin : getBolsinesEnviados()
+loop Para todos los bolsines
+GestorRegRecepBolsin -> Bolsin : esTuCMDestino()
+GestorRegRecepBolsin -> Bolsin : esEnviado()
+Bolsin -> Bolsin : obtenerEstadoActual()
+Bolsin -> CambioEstadoBolsin : *esActual()
+Bolsin -> estadoActual : esEnviado()
+estadoActual -> Estado : esEnviado()
+GestorRegRecepBolsin -> Bolsin : getNroPrecinto()
+end
+
+
+GestorRegRecepBolsin -> pantalla : solicitarSelecBolsin()
+EB -> pantalla : tomarSelecBolsin()
+
+
+pantalla -> GestorRegRecepBolsin : tomarSelecBolsin()
+GestorRegRecepBolsin -> GestorRegRecepBolsin : getRemitosAsociados()
+GestorRegRecepBolsin -> bolsinSeleccionado : obtenerInformacionRemito()
+GestorRegRecepBolsin -> pantalla : mostrarDatosBolsin()
+loop Para todos los remitos asociados
+    bolsinSeleccionado -> Remito : *getNumero()
+    bolsinSeleccionado -> Remito : buscarDocumentacion()
+    loop Para todos los remitos asociados
+        Remito -> DetalleRemito : mostrarDocumentacion()
+        DetalleRemito -> Documentacion : getAsunto()
+        DetalleRemito -> Documentacion : mostrarTipoDocumentacion()
+        Documentacion -> TipoDocumentacion : getNombre()
+    end
+end
+GestorRegRecepBolsin -> pantalla : solicitarOpcionBolsin()
+EB -> pantalla : tomarSelecOpcionBolsin()
+pantalla -> GestorRegRecepBolsin : tomarSelecOpcionBolsin()
+GestorRegRecepBolsin -> pantalla : solicitarConfirmacion()
+pantalla -> EB : solicitarConfirmacion()
+EB -> pantalla : tomarConfirmacion()
+pantalla -> GestorRegRecepBolsin : tomarConfirmacion()
+
+GestorRegRecepBolsin -> GestorRegRecepBolsin : buscarEstadoRecYAcept()
+GestorRegRecepBolsin -> Estado : sosRecibidoYAceptado()
+GestorRegRecepBolsin -> GestorRegRecepBolsin : confirmarRecibido()
+GestorRegRecepBolsin -> GestorRegRecepBolsin : getFechaYHora()
+
+GestorRegRecepBolsin -> bolsinSeleccionado : setDetalleBolsin()
+
+bolsinSeleccionado -> estadoActual : setFechaHoraFin()
+GestorRegRecepBolsin -> bolsinSeleccionado : crearCEBolsin()
+bolsinSeleccionado -> nuevoEstado ** : new()
+bolsinSeleccionado -> bolsinSeleccionado : setEstado()
+bolsinSeleccionado -> remitoSeleccionado : actualizarEstadoDoc()
+
+loop Para todos los remitos asociados al bolsín seleccionado
+    remitoSeleccionado -> remitoSeleccionado : setEstado()
+    remitoSeleccionado -> documentacionSeleccionada : actualizarEstadoDoc()
+    
+    loop Para toda la documentación del remito
+        documentacionSeleccionada -> estadoActualDocumentacion : setFechaHoraFin()
+        documentacionSeleccionada -> nuevoEstadoDocumentacion ** : new()
+        documentacionSeleccionada -> documentacionSeleccionada : setEstado()
+        documentacionSeleccionada -> documentacionSeleccionada : setEmpleado()
+    end
+end
+
+GestorRegRecepBolsin -> GestorNotificacionBolsin ** : notificarRecepcion()
+
+
+
+
+
+
+
+
+hide footbox
+@enduml

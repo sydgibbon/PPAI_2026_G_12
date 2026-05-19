@@ -1,0 +1,202 @@
+@startuml vista-analisis
+
+class Empleado {
+  apellido
+  email
+  nombre
+  esTuCM()
+  getCM()
+  getEmail()
+  mostrarCM()
+  sosGCM()
+}
+
+class Usuario {
+  nombre
+  password
+  getEmpleado()
+}
+
+class Sesion {
+  fechaHoraInicio
+  fechaHoraFin
+  getUsuarioLogueado()
+}
+
+class GestorRegRecepBolsin {
+  regRecepBolsin()
+  getEmpleadoLogueado()
+  getCMEmpleado()
+  getBolsinesEnviados()
+  tomarSelecBolsin()
+  getRemitosAsociados()
+  tomarSelecOpcionBolsin()
+  buscarEstadoRecYAcept()
+  confirmarRecibido()
+  getFechaYHora()
+  tomarConfirmacion()
+}
+
+class PantallaRegRecepBolsin {
+  habilitarPantalla()
+  opcionRegRecepBolsin()
+  solicitarSelecBolsin()
+  tomarSelecBolsin()
+  mostrarDatosBolsin()
+  solicitarOpcionBolsin()
+  tomarSelecOpcionBolsin()
+  solicitarConfirmacion()
+  tomarConfirmacion()
+}
+
+class GestorNotificacionBolsin {
+  notificarRecepcion()
+}
+
+class ComisionMedica {
+  codigo
+  direccion
+  email
+  nombre
+  telefono
+  getNombre()
+}
+
+class Bolsin {
+  fecha
+  numeroBolsin
+  numeroPrecinto
+  peso
+  asociarRemito()
+  crearCEBolsin()
+  esTuCMDestino()
+  esTuCMOrigen()
+  esEnviado()
+  getNroPrecinto()
+  getNumeroBolsin()
+  mostrarDatos()
+  new()
+  obtenerCMDestino()
+  obtenerEstadoActual()
+  obtenerInformacionRemito()
+  setDetalleBolsin()
+  setEstado()
+  sosEnviado()
+}
+
+class CambioEstadoBolsin {
+  fechaHoraFin
+  fechaHoraInicio
+  esActual()
+  esEnviado()
+  new()
+  setFechaHoraFin()
+  sosActual()
+  sosEnviado()
+}
+
+class Estado {
+  ambito
+  descripcion
+  nombre
+  esAmbitoBolsin()
+  esAmbitoDocumentacion()
+  esAmbitoRemito()
+  esEnviado()
+  esRecibidaYAceptada()
+  esRecibidoEnCMDestino()
+  esRecibidoYAceptado()
+  getAmbito()
+  getDescripcion()
+  getNombre()
+  new()
+  setAmbito()
+  setDescripcion()
+  setNombre()
+  sosRecibidoYAceptado()
+}
+
+class Remito {
+  fecha
+  número
+  actualizarEstadoDoc()
+  buscarDocumentacion()
+  estasGenerado()
+  getDatosRemito()
+  getNumero()
+  getDocumentacionIncluida()
+  mostrarInformacionRemito()
+  new()
+  setEstado()
+  tenesEstaCMDestino()
+  tenesEstaCMOrigen()
+  tomarDocumentacion()
+}
+
+class DetalleRemito {
+  areaCMCDestino
+  aceptarDocumentacion()
+  actualizarEstadoDoc()
+  getDocumentacion()
+  mostrarDocumentacion()
+}
+
+class Documentacion {
+  asunto
+  fechaPase
+  numero
+  aceptar()
+  actualizarEstadoDoc()
+  crearCE()
+  getAsunto()
+  getDatosDocumentacion()
+  mostrarTipoDocumentacion()
+  new()
+  remitar()
+  setEmpleado()
+  setEstado()
+}
+
+class CambioEstadoDocumentacion {
+  fechaHoraFin
+  fechaHoraInicio
+  new()
+  setFechaHoraFin()
+  sosActual()
+}
+
+class TipoDocumentacion {
+  descripcion
+  nombre
+  getDescripcion()
+  getNombre()
+  new()
+  setDescripcion()
+  setNombre()
+}
+
+PantallaRegRecepBolsin ..> GestorRegRecepBolsin
+PantallaRegRecepBolsin <.. GestorRegRecepBolsin
+GestorRegRecepBolsin ..> Sesion
+GestorRegRecepBolsin ..> Empleado
+GestorRegRecepBolsin ..> Bolsin
+GestorRegRecepBolsin ..> Estado
+GestorRegRecepBolsin ..> GestorNotificacionBolsin
+Sesion --> Usuario
+Usuario --> Empleado
+Empleado --> ComisionMedica
+Bolsin --> ComisionMedica : origen
+Bolsin --> ComisionMedica : destino
+Remito --> ComisionMedica : origen
+Remito --> ComisionMedica : destino
+Bolsin --> CambioEstadoBolsin
+CambioEstadoBolsin --> Estado
+Bolsin o-> Remito
+Remito --> Estado
+Remito o-> DetalleRemito
+DetalleRemito --> Documentacion
+Documentacion --> TipoDocumentacion
+Documentacion --> CambioEstadoDocumentacion
+CambioEstadoDocumentacion --> Estado
+
+@enduml
