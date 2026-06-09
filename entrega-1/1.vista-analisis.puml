@@ -9,6 +9,7 @@ class Empleado {
   getEmail()
   mostrarCM()
   sosGCM()
+  esTuUsuario()
 }
 
 class Usuario {
@@ -26,6 +27,7 @@ class Sesion {
 class GestorRegRecepBolsin {
   regRecepBolsin()
   getEmpleadoLogueado()
+  getUsuarioLogueado()
   getCMEmpleado()
   getBolsinesEnviados()
   tomarSelecBolsin()
@@ -35,6 +37,11 @@ class GestorRegRecepBolsin {
   confirmarRecibido()
   getFechaYHora()
   tomarConfirmacion()
+  tomarOpcionContenidoOK()
+  buscarEstadosAAsignar()
+  getFechaYHoraActual()
+  recibirBolsin()
+  finCU()
 }
 
 class PantallaRegRecepBolsin {
@@ -47,6 +54,12 @@ class PantallaRegRecepBolsin {
   tomarSelecOpcionBolsin()
   solicitarConfirmacion()
   tomarConfirmacion()
+  mostrarCMEmpleado()
+  mostrarDatosBolsinesEnviados()
+  mostrarDatosRemitoyDoc()
+  solicitarOpcionRecepBolsin()
+  tomarOpcionContenidoOK()
+  informarEjecucionExitosa()
 }
 
 class GestorNotificacionBolsin {
@@ -82,6 +95,9 @@ class Bolsin {
   setDetalleBolsin()
   setEstado()
   sosEnviado()
+  getCMOrigen()
+  recibir()
+  recibirAceptarRemito()
 }
 
 class CambioEstadoBolsin {
@@ -114,6 +130,7 @@ class Estado {
   setDescripcion()
   setNombre()
   sosRecibidoYAceptado()
+  esRecibido()
 }
 
 class Remito {
@@ -131,6 +148,7 @@ class Remito {
   tenesEstaCMDestino()
   tenesEstaCMOrigen()
   tomarDocumentacion()
+  recibirAceptar()
 }
 
 class DetalleRemito {
@@ -155,6 +173,8 @@ class Documentacion {
   remitar()
   setEmpleado()
   setEstado()
+  getEstadoActual()
+  getTipoDocumentacion()
 }
 
 class CambioEstadoDocumentacion {
