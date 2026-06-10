@@ -1,11 +1,48 @@
-@startuml
+@startuml Maquina de Estados - Documentacion
 
-[*] --> State1
-State1 --> [*]
-State1 : this is a string
-State1 : this is another string
+skinparam stateBorderColor DarkBlue
+skinparam stateBackgroundColor White
+skinparam arrowColor DarkBlue
 
-State1 -> State2
-State2 --> [*]
+state "Registrada" as Registrada
+state "En remito" as EnRemito
+state "En bolsín saliente" as EnBolsinSaliente
+state "En bolsín enviado" as EnBolsinEnviado
+state "Recibida y aceptada" as RecibidaYAceptada
+state "No recibida" as NoRecibida
+state "Recibida y rechazada" as RecibidaYRechazada
+state "Para redirigir" as ParaRedirigir
+state "De baja" as DeBaja
+
+[*] --> Registrada
+
+Registrada --> EnRemito : 15. Generar Remito /remitar()
+Registrada --> EnRemito : 16. Modificar Remito /remitar()
+Registrada --> DeBaja : 9. Eliminar Documentación /actualizarEstadoDoc()
+
+EnRemito --> Registrada : 17. Cancelar Remito /actualizarEstadoDoc()
+EnRemito --> Registrada : 16. Modificar Remito /actualizarEstadoDoc()
+EnRemito --> EnBolsinSaliente : 19. Generar Bolsín /actualizarEstadoDoc()
+EnRemito --> EnBolsinSaliente : 20. Modificar Bolsín /actualizarEstadoDoc()
+
+EnBolsinSaliente --> EnRemito : 20. Modificar Bolsín /actualizarEstadoDoc()
+EnBolsinSaliente --> EnRemito : 21. Eliminar Bolsín /actualizarEstadoDoc()
+EnBolsinSaliente --> EnBolsinEnviado : 27. Registrar el retiro de bolsines /actualizarEstadoDoc()
+
+EnBolsinEnviado --> RecibidaYAceptada : 28. Registrar recepción de bolsín \n [Contenido coincide con lo registrado = SI] \n /aceptar()
+EnBolsinEnviado --> NoRecibida : 28. Registrar recepción de bolsín \n [No se recibe toda la documentación asociada = SI] \n /actualizarEstadoDoc()
+EnBolsinEnviado --> RecibidaYRechazada : 28. Registrar recepción de bolsín \n [Documentación no corresponde a la CM destino = SI] \n /actualizarEstadoDoc()
+EnBolsinEnviado --> ParaRedirigir : 28. Registrar recepción de bolsín \n [Documentación para redirigir a otra área = SI] \n /actualizarEstadoDoc()
+
+ParaRedirigir --> RecibidaYAceptada : 31. Registrar Revisión de Documentación \n [Documentación es correcta = SI] \n /aceptar()
+ParaRedirigir --> RecibidaYRechazada : 31. Registrar Revisión de Documentación \n [No corresponde al área = SI] \n /actualizarEstadoDoc()
+
+NoRecibida --> Registrada : 31. Registrar Revisión de Documentación \n [Se desea volver a vincular a remito = SI] \n /actualizarEstadoDoc()
+NoRecibida --> DeBaja : 31. Registrar Revisión de Documentación \n [Ya no es relevante su envío = SI] \n /actualizarEstadoDoc()
+
+RecibidaYRechazada --> Registrada : 31. Registrar Revisión de Documentación /actualizarEstadoDoc()
+
+RecibidaYAceptada --> [*]
+DeBaja --> [*]
 
 @enduml
