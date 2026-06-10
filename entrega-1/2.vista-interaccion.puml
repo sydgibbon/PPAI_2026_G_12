@@ -6,7 +6,6 @@ actor ":EncargadoDeBolsines" as EB
 boundary ":PantallaRegRecepBolsin" as pantalla
 control ":GestorRegRecepBolsin" as gestor
 entity "activa:Sesion" as Sesion
-entity "logueado:Usuario" as Logueado
 entity ":Empleado" as Empleado #OrangeRed
 entity "logueado:Empleado" as LogEmp 
 entity ":Bolsin" as Bolsin #OrangeRed
@@ -33,9 +32,7 @@ participant "29 Notificar Recepción de Bolsin" as casoDeUso29 #8cbce4
 EB --> pantalla ** : opcionRegRecepBolsin()
 pantalla -> pantalla : habilitarPantalla()
 pantalla --> gestor ** : regRecepBolsin()
-gestor -> gestor : getUsuarioLogueado()
-gestor -> Sesion : getUsuarioLogueado()
-Sesion -> Logueado : getEmpleado()
+gestor -> Sesion : getUsuario()
 gestor -> Empleado : //*//esTuUsuario()
 gestor -> gestor : getCMEmpleado()
 gestor -> LogEmp : getCM()
@@ -93,7 +90,7 @@ loop Mientras haya estados
     gestor -> Estado : esRecibidaYAceptada()
 end
 gestor -> gestor : getFechaYHoraActual()
-'gestor -> gestor : getUsuarioLogeado() lo hice más arriba
+'gestor -> Sesion : getUsuario() lo hice más arriba
 gestor -> gestor : recibirBolsin()
 gestor -> bolsinSeleccionado : recibir()
 bolsinSeleccionado -> bolsinSeleccionado : obtenerEstadoActual()

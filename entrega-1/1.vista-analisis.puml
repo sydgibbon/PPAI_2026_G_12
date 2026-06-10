@@ -15,27 +15,20 @@ class Empleado {
 class Usuario {
   nombre
   password
-  getEmpleado()
 }
 
 class Sesion {
   fechaHoraInicio
   fechaHoraFin
-  getUsuarioLogueado()
+  getUsuario()
 }
 
 class GestorRegRecepBolsin {
   regRecepBolsin()
-  getEmpleadoLogueado()
-  getUsuarioLogueado()
   getCMEmpleado()
   getBolsinesEnviados()
   tomarSelecBolsin()
   getRemitosAsociados()
-  tomarSelecOpcionBolsin()
-  buscarEstadoRecYAcept()
-  confirmarRecibido()
-  getFechaYHora()
   tomarConfirmacion()
   tomarOpcionContenidoOK()
   buscarEstadosAAsignar()
@@ -47,11 +40,7 @@ class GestorRegRecepBolsin {
 class PantallaRegRecepBolsin {
   habilitarPantalla()
   opcionRegRecepBolsin()
-  solicitarSelecBolsin()
   tomarSelecBolsin()
-  mostrarDatosBolsin()
-  solicitarOpcionBolsin()
-  tomarSelecOpcionBolsin()
   solicitarConfirmacion()
   tomarConfirmacion()
   mostrarCMEmpleado()
@@ -93,7 +82,6 @@ class Bolsin {
   obtenerEstadoActual()
   obtenerInformacionRemito()
   setDetalleBolsin()
-  setEstado()
   sosEnviado()
   getCMOrigen()
   recibir()
@@ -104,7 +92,6 @@ class CambioEstadoBolsin {
   fechaHoraFin
   fechaHoraInicio
   esActual()
-  esEnviado()
   new()
   setFechaHoraFin()
   sosActual()
@@ -129,7 +116,6 @@ class Estado {
   setAmbito()
   setDescripcion()
   setNombre()
-  sosRecibidoYAceptado()
   esRecibido()
 }
 
@@ -171,7 +157,6 @@ class Documentacion {
   mostrarTipoDocumentacion()
   new()
   remitar()
-  setEmpleado()
   setEstado()
   getEstadoActual()
   getTipoDocumentacion()
@@ -202,21 +187,21 @@ GestorRegRecepBolsin ..> Empleado
 GestorRegRecepBolsin ..> Bolsin
 GestorRegRecepBolsin ..> Estado
 GestorRegRecepBolsin ..> GestorNotificacionBolsin
-Sesion --> Usuario
-Usuario --> Empleado
-Empleado --> ComisionMedica
-Bolsin --> ComisionMedica : origen
-Bolsin --> ComisionMedica : destino
-Remito --> ComisionMedica : origen
-Remito --> ComisionMedica : destino
-Bolsin --> CambioEstadoBolsin
-CambioEstadoBolsin --> Estado
-Bolsin o-> Remito
-Remito --> Estado
-Remito o-> DetalleRemito
-DetalleRemito --> Documentacion
-Documentacion --> TipoDocumentacion
-Documentacion --> CambioEstadoDocumentacion
-CambioEstadoDocumentacion --> Estado
+Sesion "*" --> "1" Usuario
+Empleado "1" --> "1" Usuario
+Empleado "1" --> "1" ComisionMedica
+Bolsin "*" --> "1" ComisionMedica : origen
+Bolsin "*" --> "1" ComisionMedica : destino
+Remito "*" --> "1" ComisionMedica : origen
+Remito "*" --> "1" ComisionMedica : destino
+Bolsin "1" --> "1..*" CambioEstadoBolsin
+CambioEstadoBolsin "*" --> "1" Estado
+Bolsin "1..*" o-> "1" Remito
+Remito "*" --> "1" Estado
+Remito "1" o-> "1..*" DetalleRemito
+DetalleRemito "*" --> "1" Documentacion
+Documentacion "*" --> "1" TipoDocumentacion
+Documentacion "1" --> "1..*" CambioEstadoDocumentacion
+CambioEstadoDocumentacion "*" --> "1" Estado
 
 @enduml
