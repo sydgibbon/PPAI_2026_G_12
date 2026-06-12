@@ -39,9 +39,6 @@ state DeBaja
 ' "luego cuando se la incluye en un remito, pasa al estado En remito." (Regla: Movimiento de la Documentación)
 Registrada --> EnRemito : 15. Generar Remito /remitar() \n 16. Modificar Remito /agregarARemito()
 
-' "Dar de baja una documentación validando que no se encuentre en un remito ni incluida en un bolsín." (UC 9: Eliminar Documentación)
-Registrada --> DeBaja : 9. Eliminar Documentación /darDeBaja()
-
 ' UC17: "Un remito puede cancelarse mientras este en estado creado, en este caso la documentación asociada vuelve al estado Registrada." (Regla: Remito por CM)
 ' UC16: "Al modificar un bolsín, la documentación asociada a los remitos que se quitan del bolsín pasa a estado en remito." (Regla: Movimiento de la Documentación)
 EnRemito --> Registrada : 17. Cancelar Remito /cancelar() \n 16. Modificar Remito /quitarDeRemito()

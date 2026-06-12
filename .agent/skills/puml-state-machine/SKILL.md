@@ -34,6 +34,9 @@ This skill defines the rules for creating and modifying PlantUML **state machine
 
 - **States MUST be identified exclusively from `docs/descripcion_dominio.md`.**
   Read the domain description to extract every state mentioned for the entity being modeled (e.g., *Registrada*, *En remito*, *En bolsín saliente*, etc.).
+
+> [!IMPORTANT]
+> `docs/descripcion_dominio.md` is the **sole source** for all modeling decisions: which states exist, which transitions are valid, and what conditions guard them. `docs/listado_funcionalidad_sistema.md` is consulted **only** to look up the UC number and name to display in the transition label — it must never be used to infer or justify a new state or transition.
 - **States are declared only — no descriptions are allowed.**
   Use the PlantUML `state` keyword with no body:
   ```plantuml
@@ -107,18 +110,18 @@ N. UC Name \n [Condición en lenguaje natural = SI] \n /method()
 
 Use `\n` for line breaks to keep the diagram readable.
 
-### 7. Pseudostate Transitions Are Bare
-
-Initial and final pseudostate transitions **must not** include method names or use case references:
+The initial pseudostate transition **must** carry the UC label and method that creates the entity, because creating the entity is what places it into its first state:
 
 ```plantuml
-' ✅ Correct
-[*] --> Registrada
+' ✅ Correct — creation is an action backed by a UC
+[*] --> Registrada : 7. Registrar Documentación /new()
 DeBaja --> [*]
 
-' ❌ Incorrect
-[*] --> Registrada : 7. Registrar Documentación /new()
+' ❌ Incorrect — bare initial arrow loses traceability
+[*] --> Registrada
 ```
+
+Final pseudostate transitions (`--> [*]`) remain bare — terminal states have no exit action.
 
 ---
 
@@ -143,7 +146,7 @@ state Estado3
 ' TRANSITIONS
 ' ========================
 
-[*] --> Estado1
+[*] --> Estado1 : N. UC Name /new()
 
 Estado1 --> Estado2 : N. UC Name /method()
 Estado2 --> Estado3 : N. UC Name \n [Condicion = SI] \n /method()
@@ -159,8 +162,8 @@ Estado3 --> [*]
 
 - [ ] All states come from `docs/descripcion_dominio.md` only
 - [ ] States are declared without descriptions (no body)
-- [ ] Initial `[*] -->` and final `--> [*]` pseudostates exist
-- [ ] Pseudostate transitions have no methods or use cases
+- [ ] Initial `[*] -->` transition carries the creation UC label and `/new()` method
+- [ ] Final `--> [*]` transitions are bare (no label)
 - [ ] Every other transition has format `N. UC Name /method()`
 - [ ] Methods are descriptive (`remitar()`, `aceptar()`, not `setEstado()`)
 - [ ] Methods from `docs/modelo_dominio_bolsines.puml` are also present in `entrega-n/1.vista-analisis.puml`
@@ -172,5 +175,6 @@ Estado3 --> [*]
 - **Using `setEstado()` as a transition method** — always use a descriptive action method instead.
 - **Forgetting to sync methods with the vista-analisis** — if you reference `remitar()` from the domain model, it must appear on the entity class in `1.vista-analisis.puml`.
 - **Adding state descriptions** — states must be declared bare, with no body content.
-- **Adding methods to pseudostate transitions** — initial and final transitions are always bare arrows.
+- **Adding methods to final pseudostate transitions** — only the initial transition carries a UC label; final transitions (`--> [*]`) are always bare.
+- **Using listado_funcionalidad_sistema.md to decide states or transitions** — that file only provides UC numbers and names for labels. All structural decisions (states, transitions, guards) must come from `docs/descripcion_dominio.md`.
 - **Inventing states not in the domain description** — every state must be traceable to `docs/descripcion_dominio.md`.
