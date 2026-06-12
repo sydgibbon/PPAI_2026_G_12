@@ -28,7 +28,7 @@ class GestorRegRecepBolsin {
   tomarOpcionContenidoOK()
   buscarEstadosAAsignar()
   getFechaYHoraActual()
-  recibirBolsin()
+  confirmarRecepcion()
   finCU()
 }
 
@@ -88,7 +88,9 @@ class CambioEstadoBolsin {
   fechaHoraInicio
   esActual()
   new()
+  setEstado()
   setFechaHoraFin()
+  setResponsableCE()
   sosActual()
   sosEnviado()
 }
@@ -192,7 +194,9 @@ class CambioEstadoDocumentacion {
   fechaHoraFin
   fechaHoraInicio
   new()
+  setEstado()
   setFechaHoraFin()
+  setResponsableCE()
   sosActual()
 }
 
