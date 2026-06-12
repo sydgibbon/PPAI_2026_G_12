@@ -42,6 +42,12 @@ All `.puml` files in the same `entrega-n/` directory must be perfectly consisten
 - **Methods and Attributes**: Every method call depicted in a sequence diagram must be declared on the target class in the corresponding class diagram (or defined in `docs/` for domain entities if omitted from the local class diagram).
 - **Naming Style**: Maintain identical casing and characters. Method names **must not contain spaces** (e.g., write `esAmbitoRemito()` instead of `es AmbitoRemito()`). Mismatches such as `esTuCMdestino` vs `esTuCMDestino` are discrepancies and must be avoided.
 
+### 5. Domain Model as Starting Point
+- `docs/modelo_dominio_bolsines.puml` is the **immutable starting point** of the system. It defines the base classes, attributes, methods, and relationships.
+- `entrega-n/1.vista-analisis.puml` **extends** the domain model for each delivery by adding new methods, non-entity classes (boundaries, controllers), and delivery-specific relationships.
+- If a method or class from the domain model is used in any delivery diagram (sequence, state machine, etc.), it **must also appear** in the corresponding `entrega-n/1.vista-analisis.puml`.
+- New methods that do not exist in the domain model are **only added** to `entrega-n/1.vista-analisis.puml`, never to `docs/`.
+
 ## Common Mistakes
 - **Method Discrepancy on Domain Entities**: Inventing helper methods on domain entities (like `esTuUsuario()` on `Empleado` or `getCMOrigen()` on `Bolsin`) instead of navigating relationships or using the existing API defined in `docs/`.
 - **Controller/Boundary Renaming**: Using different names for control/boundary classes in sequence diagrams vs. class diagrams.
