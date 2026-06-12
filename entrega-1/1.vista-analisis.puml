@@ -19,6 +19,11 @@ class Sesion {
 }
 
 class GestorRegRecepBolsin {
+  cmEmpleado
+  bolsinesEnviados
+  bolsinSeleccionado
+  opcionRecepcionSeleccionada
+  confirmado
   regRecepBolsin()
   getCMEmpleado()
   getBolsinesEnviados()
@@ -33,6 +38,11 @@ class GestorRegRecepBolsin {
 }
 
 class PantallaRegRecepBolsin {
+  txtCMEmpleado
+  cmbBolsinesEnviados
+  inputFiltroPrecinto
+  cmbOpcionesRecepcion
+  btnConfirmar
   habilitarPantalla()
   opcionRegRecepBolsin()
   tomarSelecBolsin()
