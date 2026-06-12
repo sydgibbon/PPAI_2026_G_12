@@ -28,7 +28,8 @@ state RecibidaYRechazada
 ' "la documentación se actualiza al estado Para redirigir." (Regla: Recepción de un Bolsín en una CM Destino)
 state ParaRedirigir
 
-' "puede eliminarse, actualizando su estado a De baja." (Regla: Manejo de un Bolsín)
+' UC9: "Dar de baja una documentación validando que no se encuentre en un remito ni incluida en un bolsín." (UC: Eliminar Documentación)
+' "También puede darse de baja porque se considera que ya no es relevante su envío." (Regla: Recepción de un Bolsín en una CM Destino)
 state DeBaja
 
 ' "Al registrar la documentación en el sistema, esta queda en estado registrada." (Regla: Movimiento de la Documentación)
@@ -38,7 +39,7 @@ state DeBaja
 ' "luego cuando se la incluye en un remito, pasa al estado En remito." (Regla: Movimiento de la Documentación)
 Registrada --> EnRemito : 15. Generar Remito /remitar() \n 16. Modificar Remito /agregarARemito()
 
-' "Mientras un bolsín se encuentre en estado creado o cerrado puede eliminarse, actualizando su estado a De baja." (Regla: Manejo de un Bolsín)
+' "Dar de baja una documentación validando que no se encuentre en un remito ni incluida en un bolsín." (UC 9: Eliminar Documentación)
 Registrada --> DeBaja : 9. Eliminar Documentación /darDeBaja()
 
 ' UC17: "Un remito puede cancelarse mientras este en estado creado, en este caso la documentación asociada vuelve al estado Registrada." (Regla: Remito por CM)
