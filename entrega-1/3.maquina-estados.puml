@@ -4,42 +4,82 @@ skinparam stateBorderColor DarkBlue
 skinparam stateBackgroundColor White
 skinparam arrowColor DarkBlue
 
+' "Al registrar la documentación en el sistema, esta queda en estado registrada." (Regla: Movimiento de la Documentación)
 state Registrada
+
+' "luego cuando se la incluye en un remito, pasa al estado En remito." (Regla: Movimiento de la Documentación)
 state EnRemito
+
+' "Cuando la documentación incluida en un remito se agrega a un bolsín se actualiza su estado a en bolsín saliente." (Regla: Agregar documentación a un Bolsín)
 state EnBolsinSaliente
+
+' "El estado de la documentación incluida en cada remito [pasa] de en bolsín saliente a en bolsín enviado." (Regla: Retiro de un Bolsín)
 state EnBolsinEnviado
+
+' "Los remitos y la documentación asociada pasan al estado recibida y aceptada." (Regla: Recepción de un Bolsín en una CM Destino)
 state RecibidaYAceptada
+
+' "la documentación que no llegó queda como no recibida." (Regla: Recepción de un Bolsín en una CM Destino)
 state NoRecibida
+
+' "la documentación se marca como recibida y rechazada." (Regla: Recepción de un Bolsín en una CM Destino)
 state RecibidaYRechazada
+
+' "la documentación se actualiza al estado Para redirigir." (Regla: Recepción de un Bolsín en una CM Destino)
 state ParaRedirigir
+
+' "puede eliminarse, actualizando su estado a De baja." (Regla: Manejo de un Bolsín)
 state DeBaja
 
-[*] --> Registrada
+' "Al registrar la documentación en el sistema, esta queda en estado registrada." (Regla: Movimiento de la Documentación)
+[*] --> Registrada : 7. Registrar Documentación /new()
 
-Registrada --> EnRemito : 15. Generar Remito /remitar()
-Registrada --> EnRemito : 16. Modificar Remito /agregarARemito()
+' "el trabajador de la CM debe generar un remito que contenga el detalle de la documentación... la que debe estar previamente registrada en el sistema." (Sección: Remitos)
+' "luego cuando se la incluye en un remito, pasa al estado En remito." (Regla: Movimiento de la Documentación)
+Registrada --> EnRemito : 15. Generar Remito /remitar() \n 16. Modificar Remito /agregarARemito()
+
+' "Mientras un bolsín se encuentre en estado creado o cerrado puede eliminarse, actualizando su estado a De baja." (Regla: Manejo de un Bolsín)
 Registrada --> DeBaja : 9. Eliminar Documentación /darDeBaja()
 
-EnRemito --> Registrada : 17. Cancelar Remito /cancelar()
-EnRemito --> Registrada : 16. Modificar Remito /quitarDeRemito()
-EnRemito --> EnBolsinSaliente : 19. Generar Bolsín /asociarBolsin()
-EnRemito --> EnBolsinSaliente : 20. Modificar Bolsín /asociarBolsin()
+' UC17: "Un remito puede cancelarse mientras este en estado creado, en este caso la documentación asociada vuelve al estado Registrada." (Regla: Remito por CM)
+' UC16: "Al modificar un bolsín, la documentación asociada a los remitos que se quitan del bolsín pasa a estado en remito." (Regla: Movimiento de la Documentación)
+EnRemito --> Registrada : 17. Cancelar Remito /cancelar() \n 16. Modificar Remito /quitarDeRemito()
 
-EnBolsinSaliente --> EnRemito : 20. Modificar Bolsín /desasociarBolsin()
-EnBolsinSaliente --> EnRemito : 21. Eliminar Bolsín /desasociarBolsin()
+' "Cuando la documentación incluida en un remito se agrega a un bolsín se actualiza su estado a en bolsín saliente." (Regla: Agregar documentación a un Bolsín)
+EnRemito --> EnBolsinSaliente : 19. Generar Bolsín /asociarBolsin() \n 20. Modificar Bolsín /asociarBolsin()
+
+' UC20: "Al modificar un bolsín, la documentación asociada a los remitos que se quitan del bolsín pasa a estado en remito." (Regla: Movimiento de la Documentación)
+' UC21: "Al eliminar un bolsín, la documentación asociada a los remitos que contiene pasa al estado en remito." (Regla: Movimiento de la Documentación)
+EnBolsinSaliente --> EnRemito : 20. Modificar Bolsín /desasociarBolsin() \n 21. Eliminar Bolsín /desasociarBolsin()
+
+' "Cuando el correo retira el bolsín de la CM se actualizará... El estado de la documentación incluida en cada remito de en bolsín saliente a en bolsín enviado." (Regla: Retiro de un Bolsín)
 EnBolsinSaliente --> EnBolsinEnviado : 27. Registrar el retiro de bolsines /enviar()
 
+' "El contenido del bolsín es igual al registrado: Los remitos y la documentación asociada pasan al estado recibida y aceptada." (Regla: Recepción de un Bolsín en una CM Destino)
 EnBolsinEnviado --> RecibidaYAceptada : 28. Registrar recepción de bolsín \n [Contenido coincide con lo registrado = SI] \n /aceptar()
+
+' "No se recibe toda la documentación asociada a los remitos que contiene el bolsín: la documentación que no llegó queda como no recibida." (Regla: Recepción de un Bolsín en una CM Destino)
 EnBolsinEnviado --> NoRecibida : 28. Registrar recepción de bolsín \n [No se recibe toda la documentación asociada = SI] \n /noRecibir()
+
+' "Documentación que no corresponde a la CM destino: la documentación se marca como recibida y rechazada." (Regla: Recepción de un Bolsín en una CM Destino)
 EnBolsinEnviado --> RecibidaYRechazada : 28. Registrar recepción de bolsín \n [Documentación no corresponde a la CM destino = SI] \n /rechazar()
+
+' "Ocurre cuando la CM destino es la CMC que recibe documentación que debe ser enviada a un área dentro de la sede central. En este caso la documentación se actualiza al estado Para redirigir." (Regla: Recepción de un Bolsín en una CM Destino)
 EnBolsinEnviado --> ParaRedirigir : 28. Registrar recepción de bolsín \n [Documentación para redirigir a otra área = SI] \n /redirigir()
 
+' "Cuando el área dentro de la CMC recibe la documentación verifica si es correcta. Si es así, la marca como recibida y aceptada." (Regla: Documentación para redirigir)
 ParaRedirigir --> RecibidaYAceptada : 31. Registrar Revisión de Documentación \n [Documentación es correcta = SI] \n /aceptar()
+
+' "De lo contrario, si no corresponde al área, se marca como recibida y rechazada." (Regla: Documentación para redirigir)
 ParaRedirigir --> RecibidaYRechazada : 31. Registrar Revisión de Documentación \n [No corresponde al área = SI] \n /rechazar()
 
+' "Se notifica a la CM origen para que la documentación vuelva al estado registrada, y pueda vincularse nuevamente a un remito." (Regla: Recepción de un Bolsín en una CM Destino)
 NoRecibida --> Registrada : 31. Registrar Revisión de Documentación \n [Se desea volver a vincular a remito = SI] \n /volverAVincular()
+
+' "También puede darse de baja porque se considera que ya no es relevante su envío." (Regla: Recepción de un Bolsín en una CM Destino)
 NoRecibida --> DeBaja : 31. Registrar Revisión de Documentación \n [Ya no es relevante su envío = SI] \n /darDeBaja()
 
+' "Esta documentación debe ser enviada de vuelta al origen, para poder asociarse a un nuevo remito para enviarse a la CM correcta." (Regla: Recepción de un Bolsín en una CM Destino)
 RecibidaYRechazada --> Registrada : 31. Registrar Revisión de Documentación /volverAVincular()
 
 RecibidaYAceptada --> [*]
