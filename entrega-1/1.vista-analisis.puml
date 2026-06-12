@@ -2,13 +2,8 @@
 
 class Empleado {
   apellido
-  email
   nombre
-  esTuCM()
   getCM()
-  getEmail()
-  mostrarCM()
-  sosGCM()
   esTuUsuario()
 }
 
@@ -122,27 +117,48 @@ class Estado {
 class Remito {
   fecha
   número
-  actualizarEstadoDoc()
+  aceptarDocumentacion()
+  agregarARemitoDoc()
+  asociarBolsinDoc()
   buscarDocumentacion()
+  cancelarDoc()
+  darDeBajaDoc()
+  desasociarBolsinDoc()
+  enviarDoc()
   estasGenerado()
   getDatosRemito()
   getNumero()
   getDocumentacionIncluida()
   mostrarInformacionRemito()
   new()
+  noRecibirDoc()
+  quitarDeRemitoDoc()
+  rechazarDoc()
+  redirigirDoc()
   setEstado()
   tenesEstaCMDestino()
   tenesEstaCMOrigen()
   tomarDocumentacion()
   recibirAceptar()
+  volverAVincularDoc()
 }
 
 class DetalleRemito {
   areaCMCDestino
   aceptarDocumentacion()
-  actualizarEstadoDoc()
+  agregarARemitoDoc()
+  asociarBolsinDoc()
+  cancelarDoc()
+  darDeBajaDoc()
+  desasociarBolsinDoc()
+  enviarDoc()
   getDocumentacion()
   mostrarDocumentacion()
+  noRecibirDoc()
+  quitarDeRemitoDoc()
+  rechazarDoc()
+  redirigirDoc()
+  volverAVincularDoc()
 }
 
 class Documentacion {
@@ -150,16 +166,26 @@ class Documentacion {
   fechaPase
   numero
   aceptar()
-  actualizarEstadoDoc()
+  agregarARemito()
+  asociarBolsin()
+  cancelar()
   crearCE()
+  darDeBaja()
+  desasociarBolsin()
+  enviar()
   getAsunto()
   getDatosDocumentacion()
   mostrarTipoDocumentacion()
   new()
+  noRecibir()
+  quitarDeRemito()
+  rechazar()
+  redirigir()
   remitar()
   setEstado()
   getEstadoActual()
   getTipoDocumentacion()
+  volverAVincular()
 }
 
 class CambioEstadoDocumentacion {

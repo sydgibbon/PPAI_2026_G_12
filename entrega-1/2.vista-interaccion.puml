@@ -103,11 +103,11 @@ bolsinSeleccionado -> bolsinSeleccionado : recibirAceptarRemito()
 loop Para todos los remitos asociados al bolsín seleccionado
     bolsinSeleccionado -> remitoSeleccionado : recibirAceptar()
     remitoSeleccionado -> remitoSeleccionado : setEstado()
-    remitoSeleccionado -> remitoSeleccionado : actualizarEstadoDoc()
+    remitoSeleccionado -> remitoSeleccionado : aceptarDocumentacion()
     
     loop Recorrer detalleRemito
-        remitoSeleccionado -> detalleRemitoSeleccionado : actualizarEstadoDoc()
-        detalleRemitoSeleccionado -> documentacionSeleccionada : actualizarEstadoDoc()
+        remitoSeleccionado -> detalleRemitoSeleccionado : aceptarDocumentacion()
+        detalleRemitoSeleccionado -> documentacionSeleccionada : aceptar()
         documentacionSeleccionada -> documentacionSeleccionada : getEstadoActual()
         documentacionSeleccionada -> CEDoc : //*//sosActual()
         documentacionSeleccionada -> estadoActualDocumentacion : setFechaHoraFin()

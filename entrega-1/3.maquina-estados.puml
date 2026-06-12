@@ -4,43 +4,43 @@ skinparam stateBorderColor DarkBlue
 skinparam stateBackgroundColor White
 skinparam arrowColor DarkBlue
 
-state "Registrada" as Registrada
-state "En remito" as EnRemito
-state "En bolsín saliente" as EnBolsinSaliente
-state "En bolsín enviado" as EnBolsinEnviado
-state "Recibida y aceptada" as RecibidaYAceptada
-state "No recibida" as NoRecibida
-state "Recibida y rechazada" as RecibidaYRechazada
-state "Para redirigir" as ParaRedirigir
-state "De baja" as DeBaja
+state Registrada
+state EnRemito
+state EnBolsinSaliente
+state EnBolsinEnviado
+state RecibidaYAceptada
+state NoRecibida
+state RecibidaYRechazada
+state ParaRedirigir
+state DeBaja
 
 [*] --> Registrada
 
 Registrada --> EnRemito : 15. Generar Remito /remitar()
-Registrada --> EnRemito : 16. Modificar Remito /remitar()
-Registrada --> DeBaja : 9. Eliminar Documentación /actualizarEstadoDoc()
+Registrada --> EnRemito : 16. Modificar Remito /agregarARemito()
+Registrada --> DeBaja : 9. Eliminar Documentación /darDeBaja()
 
-EnRemito --> Registrada : 17. Cancelar Remito /actualizarEstadoDoc()
-EnRemito --> Registrada : 16. Modificar Remito /actualizarEstadoDoc()
-EnRemito --> EnBolsinSaliente : 19. Generar Bolsín /actualizarEstadoDoc()
-EnRemito --> EnBolsinSaliente : 20. Modificar Bolsín /actualizarEstadoDoc()
+EnRemito --> Registrada : 17. Cancelar Remito /cancelar()
+EnRemito --> Registrada : 16. Modificar Remito /quitarDeRemito()
+EnRemito --> EnBolsinSaliente : 19. Generar Bolsín /asociarBolsin()
+EnRemito --> EnBolsinSaliente : 20. Modificar Bolsín /asociarBolsin()
 
-EnBolsinSaliente --> EnRemito : 20. Modificar Bolsín /actualizarEstadoDoc()
-EnBolsinSaliente --> EnRemito : 21. Eliminar Bolsín /actualizarEstadoDoc()
-EnBolsinSaliente --> EnBolsinEnviado : 27. Registrar el retiro de bolsines /actualizarEstadoDoc()
+EnBolsinSaliente --> EnRemito : 20. Modificar Bolsín /desasociarBolsin()
+EnBolsinSaliente --> EnRemito : 21. Eliminar Bolsín /desasociarBolsin()
+EnBolsinSaliente --> EnBolsinEnviado : 27. Registrar el retiro de bolsines /enviar()
 
 EnBolsinEnviado --> RecibidaYAceptada : 28. Registrar recepción de bolsín \n [Contenido coincide con lo registrado = SI] \n /aceptar()
-EnBolsinEnviado --> NoRecibida : 28. Registrar recepción de bolsín \n [No se recibe toda la documentación asociada = SI] \n /actualizarEstadoDoc()
-EnBolsinEnviado --> RecibidaYRechazada : 28. Registrar recepción de bolsín \n [Documentación no corresponde a la CM destino = SI] \n /actualizarEstadoDoc()
-EnBolsinEnviado --> ParaRedirigir : 28. Registrar recepción de bolsín \n [Documentación para redirigir a otra área = SI] \n /actualizarEstadoDoc()
+EnBolsinEnviado --> NoRecibida : 28. Registrar recepción de bolsín \n [No se recibe toda la documentación asociada = SI] \n /noRecibir()
+EnBolsinEnviado --> RecibidaYRechazada : 28. Registrar recepción de bolsín \n [Documentación no corresponde a la CM destino = SI] \n /rechazar()
+EnBolsinEnviado --> ParaRedirigir : 28. Registrar recepción de bolsín \n [Documentación para redirigir a otra área = SI] \n /redirigir()
 
 ParaRedirigir --> RecibidaYAceptada : 31. Registrar Revisión de Documentación \n [Documentación es correcta = SI] \n /aceptar()
-ParaRedirigir --> RecibidaYRechazada : 31. Registrar Revisión de Documentación \n [No corresponde al área = SI] \n /actualizarEstadoDoc()
+ParaRedirigir --> RecibidaYRechazada : 31. Registrar Revisión de Documentación \n [No corresponde al área = SI] \n /rechazar()
 
-NoRecibida --> Registrada : 31. Registrar Revisión de Documentación \n [Se desea volver a vincular a remito = SI] \n /actualizarEstadoDoc()
-NoRecibida --> DeBaja : 31. Registrar Revisión de Documentación \n [Ya no es relevante su envío = SI] \n /actualizarEstadoDoc()
+NoRecibida --> Registrada : 31. Registrar Revisión de Documentación \n [Se desea volver a vincular a remito = SI] \n /volverAVincular()
+NoRecibida --> DeBaja : 31. Registrar Revisión de Documentación \n [Ya no es relevante su envío = SI] \n /darDeBaja()
 
-RecibidaYRechazada --> Registrada : 31. Registrar Revisión de Documentación /actualizarEstadoDoc()
+RecibidaYRechazada --> Registrada : 31. Registrar Revisión de Documentación /volverAVincular()
 
 RecibidaYAceptada --> [*]
 DeBaja --> [*]
