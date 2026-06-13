@@ -72,7 +72,7 @@ class Bolsin {
   peso
   asociarRemito()
   crearCEBolsin()
-  setCEBolsin()
+  setEstado()
   tenesEstaCMDestino()
   esEnviado()
   getNroPrecinto()
@@ -148,7 +148,6 @@ class Documentacion {
   asociarBolsin()
   cancelar()
   crearCEDocumentacion()
-  setCEDocumentacion()
   darDeBaja()
   desasociarBolsin()
   enviar()
@@ -162,7 +161,7 @@ class Documentacion {
   remitar()
   setEstado()
   getEstadoActual()
-  getTipoDocumentacion()
+  getTipoDocumento()
   registrar()
 }
 
@@ -176,7 +175,7 @@ class CambioEstadoDocumentacion {
   sosActual()
 }
 
-class TipoDocumentacion {
+class TipoDocumento {
   descripcion
   nombre
   getDescripcion()
@@ -207,7 +206,7 @@ Bolsin "1..*" o-> "1" Remito
 Remito "*" --> "1" Estado
 Remito "1" o-> "1..*" DetalleRemito
 DetalleRemito "*" --> "1" Documentacion
-Documentacion "*" --> "1" TipoDocumentacion
+Documentacion "*" --> "1" TipoDocumento
 Documentacion "1" --> "1..*" CambioEstadoDocumentacion
 CambioEstadoDocumentacion "*" --> "1" Estado
 

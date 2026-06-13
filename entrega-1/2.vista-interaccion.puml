@@ -9,12 +9,12 @@ entity "activa:Sesion" as Sesion
 entity ":Empleado" as Empleado #OrangeRed
 entity "logueado:Empleado" as LogEmp 
 entity ":Bolsin" as Bolsin #OrangeRed
-entity "deEmp:ComisionMedica" as CMEmp
-entity "deBolsin:ComisionMedica" as CMBolsin
+entity "actual:ComisionMedica" as CMEmp
+entity "actual:ComisionMedica" as CMBolsin
 entity ":CambioEstadoBolsin" as CambioEstadoBolsin #OrangeRed
 entity "actual:CambioEstadoBolsin" as cambioEstadoActual
 entity "nuevo:CambioEstadoBolsin" as nuevoCambioEstado
-entity "delCambioEstado:Estado" as estadoActual
+entity "actual:Estado" as estadoActual
 entity ":Estado" as Estado #OrangeRed
 entity "seleccionado:Bolsin" as bolsinSeleccionado
 entity "actual:CambioEstadoDocumentacion" as estadoActualDocumentacion
@@ -23,7 +23,7 @@ entity "nuevo:CambioEstadoDocumentacion" as nuevoEstadoDocumentacion
 entity "seleccionado:Remito" as remitoSeleccionado
 entity "seleccionado:DetalleRemito" as detalleRemitoSeleccionado
 entity "seleccionado:Documentacion" as documentacionSeleccionada
-entity "deDocumentacion:TipoDocumentacion" as TipoDocumentacion
+entity "actual:TipoDocumento" as TipoDocumento
 participant "29 Notificar Recepción de Bolsin" as casoDeUso29 #8cbce4
 
 
@@ -39,7 +39,7 @@ gestor -> LogEmp : getCM()
 LogEmp -> CMEmp : getNombre()
 
 gestor -> gestor : getBolsinesEnviados()
-gestor -> Bolsin : //*//esTuCMDestino()
+gestor -> Bolsin : //*//tenesEstaCMDestino()
 loop Mientras hayan bolsines asociados a CM Destino
     gestor -> Bolsin : esEnviado()
     Bolsin -> CambioEstadoBolsin : //*//esActual()
@@ -65,8 +65,8 @@ loop Mientras haya remitos asociados al Bolsin
         remitoSeleccionado -> detalleRemitoSeleccionado : getDocumentacion()
         detalleRemitoSeleccionado -> documentacionSeleccionada : getDatosDocumentacion()
         documentacionSeleccionada -> documentacionSeleccionada : getNumero()
-        documentacionSeleccionada -> documentacionSeleccionada : getTipoDocumentacion()
-        documentacionSeleccionada -> TipoDocumentacion : getNombre()
+        documentacionSeleccionada -> documentacionSeleccionada : getTipoDocumento()
+        documentacionSeleccionada -> TipoDocumento : getNombre()
     end
 end
 
@@ -92,7 +92,7 @@ bolsinSeleccionado -> bolsinSeleccionado : crearCEBolsin()
 bolsinSeleccionado --> nuevoCambioEstado ** : new()
 nuevoCambioEstado -> nuevoCambioEstado : setEstado()
 nuevoCambioEstado -> nuevoCambioEstado : setResponsableCE()
-bolsinSeleccionado -> bolsinSeleccionado : setCEBolsin()
+bolsinSeleccionado -> bolsinSeleccionado : setEstado()
 
 bolsinSeleccionado -> bolsinSeleccionado : recibirAceptarRemito()
 
@@ -115,7 +115,7 @@ loop Para todos los remitos asociados al bolsín seleccionado
         documentacionSeleccionada --> nuevoEstadoDocumentacion ** : new()
         nuevoEstadoDocumentacion -> nuevoEstadoDocumentacion : setEstado()
         nuevoEstadoDocumentacion -> nuevoEstadoDocumentacion : setResponsableCE()
-        documentacionSeleccionada -> documentacionSeleccionada : setCEDocumentacion()
+        documentacionSeleccionada -> documentacionSeleccionada : setEstado()
     end
 end
 gestor -> gestor : llamarCUNotifRecepBolsin()
