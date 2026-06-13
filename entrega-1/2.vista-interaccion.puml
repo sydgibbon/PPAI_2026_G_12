@@ -118,6 +118,7 @@ loop Para todos los remitos asociados al bolsín seleccionado
         documentacionSeleccionada -> documentacionSeleccionada : setCEDocumentacion()
     end
 end
+gestor -> gestor : llamarCUNotifRecepBolsin()
 gestor -> casoDeUso29 : <<include>>
 gestor -> pantalla : informarEjecucionExitosa()
 gestor -> gestor : finCU()

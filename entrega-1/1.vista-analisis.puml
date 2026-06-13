@@ -33,6 +33,7 @@ class GestorRegRecepBolsin {
   tomarOpcionContenidoOK()
   getFechaYHoraActual()
   confirmarRecepcion()
+  llamarCUNotifRecepBolsin()
   finCU()
 }
 
