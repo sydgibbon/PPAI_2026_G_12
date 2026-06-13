@@ -56,10 +56,6 @@ class PantallaRegRecepBolsin {
   informarEjecucionExitosa()
 }
 
-class GestorNotificacionBolsin {
-  notificarRecepcion()
-}
-
 class ComisionMedica {
   codigo
   direccion
@@ -77,18 +73,14 @@ class Bolsin {
   asociarRemito()
   crearCEBolsin()
   setCEBolsin()
-  esTuCMDestino()
-  esTuCMOrigen()
+  tenesEstaCMDestino()
   esEnviado()
   getNroPrecinto()
   getNumeroBolsin()
-  mostrarDatos()
   new()
-  obtenerCMDestino()
   obtenerEstadoActual()
   obtenerInformacionRemito()
   setDetalleBolsin()
-  sosEnviado()
   getCMOrigen()
   recibir()
   recibirAceptarRemito()
@@ -102,7 +94,6 @@ class CambioEstadoBolsin {
   setEstado()
   setFechaHoraFin()
   setResponsableCE()
-  sosActual()
   sosEnviado()
 }
 
@@ -115,7 +106,6 @@ class Estado {
   esAmbitoRemito()
   esEnviado()
   esRecibidaYAceptada()
-  esRecibidoEnCMDestino()
   esRecibidoYAceptado()
   getAmbito()
   getDescripcion()
@@ -131,47 +121,22 @@ class Remito {
   fecha
   número
   aceptarDocumentacion()
-  agregarARemitoDoc()
-  asociarBolsinDoc()
   buscarDocumentacion()
-  cancelarDoc()
-  darDeBajaDoc()
-  desasociarBolsinDoc()
-  enviarDoc()
   estasGenerado()
   getDatosRemito()
   getNumero()
-  getDocumentacionIncluida()
-  mostrarInformacionRemito()
   new()
-  noRecibirDoc()
-  quitarDeRemitoDoc()
-  rechazarDoc()
-  redirigirDoc()
   setEstado()
   tenesEstaCMDestino()
   tenesEstaCMOrigen()
   tomarDocumentacion()
   recibirAceptar()
-  volverAVincularDoc()
 }
 
 class DetalleRemito {
   areaCMCDestino
   aceptarDocumentacion()
-  agregarARemitoDoc()
-  asociarBolsinDoc()
-  cancelarDoc()
-  darDeBajaDoc()
-  desasociarBolsinDoc()
-  enviarDoc()
   getDocumentacion()
-  mostrarDocumentacion()
-  noRecibirDoc()
-  quitarDeRemitoDoc()
-  rechazarDoc()
-  redirigirDoc()
-  volverAVincularDoc()
 }
 
 class Documentacion {
@@ -189,7 +154,6 @@ class Documentacion {
   enviar()
   getNumero()
   getDatosDocumentacion()
-  mostrarTipoDocumentacion()
   new()
   noRecibir()
   quitarDeRemito()
@@ -227,7 +191,6 @@ PantallaRegRecepBolsin <.. GestorRegRecepBolsin
 GestorRegRecepBolsin ..> Sesion
 GestorRegRecepBolsin ..> Empleado
 GestorRegRecepBolsin ..> Bolsin
-GestorRegRecepBolsin ..> GestorNotificacionBolsin
 Bolsin ..> Estado
 Remito ..> Estado
 Documentacion ..> Estado
