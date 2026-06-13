@@ -1,24 +1,24 @@
 @startuml vista-analisis
 
-class Empleado {
+class Empleado <<entity>> {
   apellido
   nombre
   getCM()
   esTuUsuario()
 }
 
-class Usuario {
+class Usuario <<entity>> {
   nombre
   password
 }
 
-class Sesion {
+class Sesion <<entity>> {
   fechaHoraInicio
   fechaHoraFin
   getUsuario()
 }
 
-class GestorRegRecepBolsin {
+class GestorRegRecepBolsin <<control>> {
   cmEmpleado
   bolsinesEnviados
   bolsinSeleccionado
@@ -31,13 +31,14 @@ class GestorRegRecepBolsin {
   getRemitosAsociados()
   tomarConfirmacion()
   tomarOpcionContenidoOK()
+  buscarEstadosAAsignar()
   getFechaYHoraActual()
   confirmarRecepcion()
   llamarCUNotifRecepBolsin()
   finCU()
 }
 
-class PantallaRegRecepBolsin {
+class PantallaRegRecepBolsin <<boundary>> {
   txtCMEmpleado
   cmbBolsinesEnviados
   inputFiltroPrecinto
@@ -56,7 +57,7 @@ class PantallaRegRecepBolsin {
   informarEjecucionExitosa()
 }
 
-class ComisionMedica {
+class ComisionMedica <<entity>> {
   codigo
   direccion
   email
@@ -65,7 +66,7 @@ class ComisionMedica {
   getNombre()
 }
 
-class Bolsin {
+class Bolsin <<entity>> {
   fecha
   numeroBolsin
   numeroPrecinto
@@ -86,7 +87,7 @@ class Bolsin {
   recibirAceptarRemito()
 }
 
-class CambioEstadoBolsin {
+class CambioEstadoBolsin <<entity>> {
   fechaHoraFin
   fechaHoraInicio
   esActual()
@@ -97,7 +98,7 @@ class CambioEstadoBolsin {
   sosEnviado()
 }
 
-class Estado {
+class Estado <<entity>> {
   ambito
   descripcion
   nombre
@@ -117,7 +118,7 @@ class Estado {
   esRecibido()
 }
 
-class Remito {
+class Remito <<entity>> {
   fecha
   número
   aceptarDocumentacion()
@@ -133,13 +134,13 @@ class Remito {
   recibirAceptar()
 }
 
-class DetalleRemito {
+class DetalleRemito <<entity>> {
   areaCMCDestino
   aceptarDocumentacion()
   getDocumentacion()
 }
 
-class Documentacion {
+class Documentacion <<entity>> {
   asunto
   fechaPase
   numero
@@ -165,7 +166,7 @@ class Documentacion {
   registrar()
 }
 
-class CambioEstadoDocumentacion {
+class CambioEstadoDocumentacion <<entity>> {
   fechaHoraFin
   fechaHoraInicio
   new()
@@ -175,7 +176,7 @@ class CambioEstadoDocumentacion {
   sosActual()
 }
 
-class TipoDocumento {
+class TipoDocumento <<entity>> {
   descripcion
   nombre
   getDescripcion()
@@ -190,24 +191,22 @@ PantallaRegRecepBolsin <.. GestorRegRecepBolsin
 GestorRegRecepBolsin ..> Sesion
 GestorRegRecepBolsin ..> Empleado
 GestorRegRecepBolsin ..> Bolsin
-Bolsin ..> Estado
-Remito ..> Estado
-Documentacion ..> Estado
-Sesion "*" --> "1" Usuario
-Empleado "1" --> "1" Usuario
-Empleado "1" --> "1" ComisionMedica
+GestorRegRecepBolsin ..> Estado
+Sesion "*" --> "1" Usuario : usuario
+Empleado "1" --> "1" Usuario : usuario
+Empleado "1" --> "1" ComisionMedica : asignadoA
 Bolsin "*" --> "1" ComisionMedica : origen
 Bolsin "*" --> "1" ComisionMedica : destino
 Remito "*" --> "1" ComisionMedica : origen
 Remito "*" --> "1" ComisionMedica : destino
-Bolsin "1" --> "1..*" CambioEstadoBolsin
-CambioEstadoBolsin "*" --> "1" Estado
-Bolsin "1..*" o-> "1" Remito
-Remito "*" --> "1" Estado
-Remito "1" o-> "1..*" DetalleRemito
-DetalleRemito "*" --> "1" Documentacion
-Documentacion "*" --> "1" TipoDocumento
-Documentacion "1" --> "1..*" CambioEstadoDocumentacion
-CambioEstadoDocumentacion "*" --> "1" Estado
+Bolsin "1" --> "1..*" CambioEstadoBolsin : cambioEstado
+CambioEstadoBolsin "*" --> "1" Estado : estado
+Bolsin "1..*" o-> "1" Remito : remito
+Remito "*" --> "1" Estado : estado
+Remito "1" o-> "1..*" DetalleRemito : detalleRemito
+DetalleRemito "*" --> "1" Documentacion : documentacion
+Documentacion "*" --> "1" TipoDocumento : tipoDocumento
+Documentacion "1" --> "1..*" CambioEstadoDocumentacion : cambioEstado
+CambioEstadoDocumentacion "*" --> "1" Estado : estado
 
 @enduml

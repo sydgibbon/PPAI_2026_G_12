@@ -1,4 +1,4 @@
-@startuml vista-interaccion
+@startuml vista-interaccion´
 skinparam sequenceParticipant underline
 skinparam roundcorner 30
 
@@ -16,13 +16,13 @@ entity "actual:CambioEstadoBolsin" as cambioEstadoActual
 entity "nuevo:CambioEstadoBolsin" as nuevoCambioEstado
 entity "actual:Estado" as estadoActual
 entity ":Estado" as Estado #OrangeRed
+entity ":Remito" as Remito #OrangeRed
+entity ":DetalleRemito" as DetalleRemito #OrangeRed
 entity "seleccionado:Bolsin" as bolsinSeleccionado
 entity "actual:CambioEstadoDocumentacion" as estadoActualDocumentacion
 entity ":CambioEstadoDocumentacion" as CEDoc #OrangeRed
 entity "nuevo:CambioEstadoDocumentacion" as nuevoEstadoDocumentacion
-entity "seleccionado:Remito" as remitoSeleccionado
-entity "seleccionado:DetalleRemito" as detalleRemitoSeleccionado
-entity "seleccionado:Documentacion" as documentacionSeleccionada
+entity "actual:Documentacion" as documentacionSeleccionada
 entity "actual:TipoDocumento" as TipoDocumento
 participant "29 Notificar Recepción de Bolsin" as casoDeUso29 #8cbce4
 
@@ -58,12 +58,12 @@ EB -> pantalla : tomarSelecBolsin()
 pantalla -> gestor : tomarSelecBolsin()
 gestor -> gestor : getRemitosAsociados()
 gestor -> bolsinSeleccionado : obtenerInformacionRemito()
-loop Mientras haya remitos asociados al Bolsin
-    bolsinSeleccionado -> remitoSeleccionado : getNumero()
-    bolsinSeleccionado -> remitoSeleccionado : buscarDocumentacion()
-    loop Mientras haya DetalleRemitos
-        remitoSeleccionado -> detalleRemitoSeleccionado : getDocumentacion()
-        detalleRemitoSeleccionado -> documentacionSeleccionada : getDatosDocumentacion()
+loop Mientras hayan remitos asociados al Bolsin Seleccionado
+    bolsinSeleccionado -> Remito : getNumero()
+    bolsinSeleccionado -> Remito : buscarDocumentacion()
+    loop Mientras hayan DetalleRemitos asociados
+        Remito -> DetalleRemito : getDocumentacion()
+        DetalleRemito -> documentacionSeleccionada : getDatosDocumentacion()
         documentacionSeleccionada -> documentacionSeleccionada : getNumero()
         documentacionSeleccionada -> documentacionSeleccionada : getTipoDocumento()
         documentacionSeleccionada -> TipoDocumento : getNombre()
@@ -80,41 +80,41 @@ pantalla -> gestor : tomarConfirmacion()
 
 'Actualizacion de estados
 
+gestor -> gestor : buscarEstadosAAsignar()
+' Buscar estado Recibido en CM destino para Bolsin
+gestor -> Estado : //*//esAmbitoBolsin()
+gestor -> Estado : //*//esRecibido()
+' Buscar estado Recibido y Aceptado para Remito
+gestor -> Estado : //*//esAmbitoRemito()
+gestor -> Estado : //*//esRecibidoYAceptado()
+' Buscar estado Recibida y Aceptada para Documentacion
+gestor -> Estado : //*//esAmbitoDocumentacion()
+gestor -> Estado : //*//esRecibidaYAceptada()
 gestor -> gestor : getFechaYHoraActual()
 'gestor -> Sesion : getUsuario() lo hice más arriba
 gestor -> gestor : confirmarRecepcion()
 gestor -> bolsinSeleccionado : recibir()
 bolsinSeleccionado -> bolsinSeleccionado : obtenerEstadoActual()
 bolsinSeleccionado -> cambioEstadoActual : setFechaHoraFin()
-bolsinSeleccionado -> Estado : //*//esAmbitoBolsin()
-bolsinSeleccionado -> Estado : //*//esRecibido()
 bolsinSeleccionado -> bolsinSeleccionado : crearCEBolsin()
 bolsinSeleccionado --> nuevoCambioEstado ** : new()
-nuevoCambioEstado -> nuevoCambioEstado : setEstado()
-nuevoCambioEstado -> nuevoCambioEstado : setResponsableCE()
 bolsinSeleccionado -> bolsinSeleccionado : setEstado()
 
 bolsinSeleccionado -> bolsinSeleccionado : recibirAceptarRemito()
 
-loop Para todos los remitos asociados al bolsín seleccionado
-    bolsinSeleccionado -> remitoSeleccionado : recibirAceptar()
-    remitoSeleccionado -> Estado : //*//esAmbitoRemito()
-    remitoSeleccionado -> Estado : //*//esRecibidoYAceptado()
-    remitoSeleccionado -> remitoSeleccionado : setEstado()
-    remitoSeleccionado -> remitoSeleccionado : aceptarDocumentacion()
+loop Mientras hayan remitos asociados al bolsín seleccionado
+    bolsinSeleccionado -> Remito : recibirAceptar()
+    Remito -> Remito : setEstado()
+    Remito -> Remito : aceptarDocumentacion()
     
-    loop Recorrer detalleRemito
-        remitoSeleccionado -> detalleRemitoSeleccionado : aceptarDocumentacion()
-        detalleRemitoSeleccionado -> documentacionSeleccionada : aceptar()
+    loop Mientras hayan DetalleRemitos asociados al Remito
+        Remito -> DetalleRemito : aceptarDocumentacion()
+        DetalleRemito -> documentacionSeleccionada : aceptar()
         documentacionSeleccionada -> documentacionSeleccionada : getEstadoActual()
         documentacionSeleccionada -> CEDoc : //*//sosActual()
         documentacionSeleccionada -> estadoActualDocumentacion : setFechaHoraFin()
-        documentacionSeleccionada -> Estado : //*//esAmbitoDocumentacion()
-        documentacionSeleccionada -> Estado : //*//esRecibidaYAceptada()
         documentacionSeleccionada -> documentacionSeleccionada : crearCEDocumentacion()
         documentacionSeleccionada --> nuevoEstadoDocumentacion ** : new()
-        nuevoEstadoDocumentacion -> nuevoEstadoDocumentacion : setEstado()
-        nuevoEstadoDocumentacion -> nuevoEstadoDocumentacion : setResponsableCE()
         documentacionSeleccionada -> documentacionSeleccionada : setEstado()
     end
 end
