@@ -1,4 +1,4 @@
-@startuml vista-interaccion´
+@startuml Realización de Análisis del CU 28 Registrar recepción de Bolsín - Vista Dinámica
 skinparam sequenceParticipant underline
 skinparam roundcorner 30
 

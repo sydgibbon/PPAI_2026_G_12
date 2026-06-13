@@ -1,4 +1,4 @@
-@startuml vista-analisis
+@startuml Realización de Análisis del CU 28 Registrar recepción de Bolsín - Vista Estática 
 
 class Empleado <<entity>> {
   apellido
