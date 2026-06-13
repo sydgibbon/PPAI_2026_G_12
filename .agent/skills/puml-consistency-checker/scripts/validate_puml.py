@@ -206,6 +206,7 @@ def validate(docs_dir: str, entrega_dir: str) -> Dict[str, List[str]]:
     # Separate class diagrams from sequence diagrams
     class_diagrams: List[str] = []
     sequence_diagrams: List[str] = []
+    state_machines: List[str] = []
     
     for filepath in puml_files:
         with open(filepath, 'r', encoding='utf-8') as f:
@@ -214,6 +215,22 @@ def validate(docs_dir: str, entrega_dir: str) -> Dict[str, List[str]]:
                 class_diagrams.append(filepath)
             elif 'actor ' in content or 'boundary ' in content or 'control ' in content or 'entity ' in content:
                 sequence_diagrams.append(filepath)
+            elif 'state ' in content or '[*]' in content:
+                state_machines.append(filepath)
+                
+    # Parse state machines to find referenced transition methods
+    state_machine_methods: Set[str] = set()
+    transition_method_re = re.compile(r'/([a-zA-Z0-9_]+)\s*(?:\(\))?')
+    for sm in state_machines:
+        with open(sm, 'r', encoding='utf-8') as f:
+            for line in f:
+                line_str = line.strip()
+                if not line_str or line_str.startswith("'"):
+                    continue
+                # Extract methods from state transition actions
+                matches = transition_method_re.findall(line_str)
+                for match in matches:
+                    state_machine_methods.add(match)
                 
     # 3. Parse diagrams inside the delivery folder
     delivery_classes: Dict[str, ClassData] = {}
@@ -342,6 +359,21 @@ def validate(docs_dir: str, entrega_dir: str) -> Dict[str, List[str]]:
                             f"Method Mismatch: Method '{meth}()' is called on class '{target_class}' in sequence diagram "
                             f"but is not defined on '{target_class}' in the class diagram."
                         )
+                        
+    # 7. Check 4: Unused methods (defined in class diagram but never called/used in sequence or state machine diagrams)
+    for class_name, c_data in delivery_classes.items():
+        if class_name in seq_actors:
+            continue
+        for meth in c_data.methods:
+            if meth == 'new':
+                continue
+            is_used_in_seq = class_name in seq_class_methods and meth in seq_class_methods[class_name]
+            is_used_in_sm = meth in state_machine_methods
+            if not is_used_in_seq and not is_used_in_sm:
+                discrepancies.append(
+                    f"Unused Method: Method '{meth}()' of class '{class_name}' is defined in the class diagram "
+                    f"but is never used in the sequence diagrams or state machine diagrams."
+                )
                         
     return {"errors": discrepancies, "warnings": warnings}
 

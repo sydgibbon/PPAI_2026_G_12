@@ -72,13 +72,13 @@ ParaRedirigir --> RecibidaYAceptada : 31. Registrar Revisión de Documentación 
 ParaRedirigir --> RecibidaYRechazada : 31. Registrar Revisión de Documentación \n [No corresponde al área = SI] \n /rechazar()
 
 ' "Se notifica a la CM origen para que la documentación vuelva al estado registrada, y pueda vincularse nuevamente a un remito." (Regla: Recepción de un Bolsín en una CM Destino)
-NoRecibida --> Registrada : 31. Registrar Revisión de Documentación \n [Se desea volver a vincular a remito = SI] \n /volverAVincular()
+NoRecibida --> Registrada : 31. Registrar Revisión de Documentación \n [Se desea volver a vincular a remito = SI] \n /registrar()
 
 ' "También puede darse de baja porque se considera que ya no es relevante su envío." (Regla: Recepción de un Bolsín en una CM Destino)
 NoRecibida --> DeBaja : 31. Registrar Revisión de Documentación \n [Ya no es relevante su envío = SI] \n /darDeBaja()
 
 ' "Esta documentación debe ser enviada de vuelta al origen, para poder asociarse a un nuevo remito para enviarse a la CM correcta." (Regla: Recepción de un Bolsín en una CM Destino)
-RecibidaYRechazada --> Registrada : 31. Registrar Revisión de Documentación /volverAVincular()
+RecibidaYRechazada --> Registrada : 31. Registrar Revisión de Documentación \n /registrar()
 
 RecibidaYAceptada --> [*]
 DeBaja --> [*]

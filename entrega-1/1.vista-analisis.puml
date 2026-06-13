@@ -31,7 +31,6 @@ class GestorRegRecepBolsin {
   getRemitosAsociados()
   tomarConfirmacion()
   tomarOpcionContenidoOK()
-  buscarEstadosAAsignar()
   getFechaYHoraActual()
   confirmarRecepcion()
   finCU()
@@ -185,7 +184,7 @@ class Documentacion {
   darDeBaja()
   desasociarBolsin()
   enviar()
-  getAsunto()
+  getNumero()
   getDatosDocumentacion()
   mostrarTipoDocumentacion()
   new()
@@ -197,7 +196,7 @@ class Documentacion {
   setEstado()
   getEstadoActual()
   getTipoDocumentacion()
-  volverAVincular()
+  registrar()
 }
 
 class CambioEstadoDocumentacion {
@@ -225,8 +224,10 @@ PantallaRegRecepBolsin <.. GestorRegRecepBolsin
 GestorRegRecepBolsin ..> Sesion
 GestorRegRecepBolsin ..> Empleado
 GestorRegRecepBolsin ..> Bolsin
-GestorRegRecepBolsin ..> Estado
 GestorRegRecepBolsin ..> GestorNotificacionBolsin
+Bolsin ..> Estado
+Remito ..> Estado
+Documentacion ..> Estado
 Sesion "*" --> "1" Usuario
 Empleado "1" --> "1" Usuario
 Empleado "1" --> "1" ComisionMedica
