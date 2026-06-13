@@ -75,6 +75,7 @@ class Bolsin {
   peso
   asociarRemito()
   crearCEBolsin()
+  setCEBolsin()
   esTuCMDestino()
   esTuCMOrigen()
   esEnviado()
@@ -180,7 +181,8 @@ class Documentacion {
   agregarARemito()
   asociarBolsin()
   cancelar()
-  crearCE()
+  crearCEDocumentacion()
+  setCEDocumentacion()
   darDeBaja()
   desasociarBolsin()
   enviar()

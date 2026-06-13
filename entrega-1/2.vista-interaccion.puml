@@ -92,6 +92,7 @@ bolsinSeleccionado -> bolsinSeleccionado : crearCEBolsin()
 bolsinSeleccionado --> nuevoCambioEstado ** : new()
 nuevoCambioEstado -> nuevoCambioEstado : setEstado()
 nuevoCambioEstado -> nuevoCambioEstado : setResponsableCE()
+bolsinSeleccionado -> bolsinSeleccionado : setCEBolsin()
 
 bolsinSeleccionado -> bolsinSeleccionado : recibirAceptarRemito()
 
@@ -110,10 +111,11 @@ loop Para todos los remitos asociados al bolsín seleccionado
         documentacionSeleccionada -> estadoActualDocumentacion : setFechaHoraFin()
         documentacionSeleccionada -> Estado : //*//esAmbitoDocumentacion()
         documentacionSeleccionada -> Estado : //*//esRecibidaYAceptada()
-        documentacionSeleccionada -> documentacionSeleccionada : crearCE()
+        documentacionSeleccionada -> documentacionSeleccionada : crearCEDocumentacion()
         documentacionSeleccionada --> nuevoEstadoDocumentacion ** : new()
         nuevoEstadoDocumentacion -> nuevoEstadoDocumentacion : setEstado()
         nuevoEstadoDocumentacion -> nuevoEstadoDocumentacion : setResponsableCE()
+        documentacionSeleccionada -> documentacionSeleccionada : setCEDocumentacion()
     end
 end
 gestor -> casoDeUso29 : <<include>>
