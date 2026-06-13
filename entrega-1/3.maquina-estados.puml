@@ -1,5 +1,6 @@
 @startuml Maquina de Estados - Documentacion
 
+hide empty description
 skinparam stateBorderColor DarkBlue
 skinparam stateBackgroundColor White
 skinparam arrowColor DarkBlue
