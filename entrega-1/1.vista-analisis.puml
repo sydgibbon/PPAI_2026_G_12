@@ -27,11 +27,15 @@ class GestorRegRecepBolsin <<control>> {
   regRecepBolsin()
   getCMEmpleado()
   getBolsinesEnviados()
+  buscarDatosBolsin()
   tomarSelecBolsin()
   getRemitosAsociados()
+  getDocumentacionAsociada()
   tomarConfirmacion()
   tomarOpcionContenidoOK()
-  buscarEstadosAAsignar()
+  buscarEstadoRecibido()
+  buscarEstadoRecibidaYAceptada()
+  buscarEstadoRecibidoYAceptado()
   getFechaYHoraActual()
   confirmarRecepcion()
   llamarCUNotifRecepBolsin()
@@ -46,6 +50,7 @@ class PantallaRegRecepBolsin <<boundary>> {
   btnConfirmar
   habilitarPantalla()
   opcionRegRecepBolsin()
+  habilitarOpcSelección()
   tomarSelecBolsin()
   solicitarConfirmacion()
   tomarConfirmacion()
@@ -73,9 +78,8 @@ class Bolsin <<entity>> {
   peso
   asociarRemito()
   crearCEBolsin()
-  setEstado()
   tenesEstaCMDestino()
-  esEnviado()
+  sosEnviado()
   getNroPrecinto()
   getNumeroBolsin()
   new()
@@ -92,9 +96,7 @@ class CambioEstadoBolsin <<entity>> {
   fechaHoraInicio
   esActual()
   new()
-  setEstado()
   setFechaHoraFin()
-  setResponsableCE()
   sosEnviado()
 }
 
@@ -152,8 +154,7 @@ class Documentacion <<entity>> {
   darDeBaja()
   desasociarBolsin()
   enviar()
-  getNumero()
-  getDatosDocumentacion()
+  getAsunto()
   new()
   noRecibir()
   quitarDeRemito()
@@ -170,9 +171,7 @@ class CambioEstadoDocumentacion <<entity>> {
   fechaHoraFin
   fechaHoraInicio
   new()
-  setEstado()
   setFechaHoraFin()
-  setResponsableCE()
   sosActual()
 }
 
@@ -187,26 +186,26 @@ class TipoDocumento <<entity>> {
 }
 
 PantallaRegRecepBolsin ..> GestorRegRecepBolsin
-PantallaRegRecepBolsin <.. GestorRegRecepBolsin
+PantallaRegRecepBolsin <.right. GestorRegRecepBolsin
 GestorRegRecepBolsin ..> Sesion
 GestorRegRecepBolsin ..> Empleado
 GestorRegRecepBolsin ..> Bolsin
 GestorRegRecepBolsin ..> Estado
-Sesion "*" --> "1" Usuario : usuario
-Empleado "1" --> "1" Usuario : usuario
-Empleado "1" --> "1" ComisionMedica : asignadoA
-Bolsin "*" --> "1" ComisionMedica : origen
-Bolsin "*" --> "1" ComisionMedica : destino
-Remito "*" --> "1" ComisionMedica : origen
-Remito "*" --> "1" ComisionMedica : destino
-Bolsin "1" --> "1..*" CambioEstadoBolsin : cambioEstado
-CambioEstadoBolsin "*" --> "1" Estado : estado
-Bolsin "1..*" o-> "1" Remito : remito
-Remito "*" --> "1" Estado : estado
-Remito "1" o-> "1..*" DetalleRemito : detalleRemito
-DetalleRemito "*" --> "1" Documentacion : documentacion
-Documentacion "*" --> "1" TipoDocumento : tipoDocumento
-Documentacion "1" --> "1..*" CambioEstadoDocumentacion : cambioEstado
-CambioEstadoDocumentacion "*" --> "1" Estado : estado
+Sesion --> "1" Usuario : usuario
+Empleado --> "0..1" Usuario : usuario
+Empleado "asignadoA" --> "1" ComisionMedica
+Bolsin --> "1" ComisionMedica : origen
+Bolsin --> "1" ComisionMedica : destino
+Remito --> "1" ComisionMedica : origen
+Remito --> "1" ComisionMedica : destino
+Bolsin --> "1..*" CambioEstadoBolsin : cambioEstado
+CambioEstadoBolsin "estado" --> "1" Estado
+Bolsin o-> "1..*" Remito : remito
+Remito --> "1" Estado : estado
+Remito o-> "1..*" DetalleRemito : detalleRemito
+DetalleRemito -right-> "1" Documentacion : documentacion
+Documentacion --> "1" TipoDocumento : tipoDocumento
+Documentacion --> "1..*" CambioEstadoDocumentacion : cambioEstado
+CambioEstadoDocumentacion --> "1" Estado : estado
 
 @enduml
