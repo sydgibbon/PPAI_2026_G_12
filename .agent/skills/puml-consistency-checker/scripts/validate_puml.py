@@ -36,6 +36,7 @@ def clean_method_name(method_str: str) -> Optional[str]:
 
 def get_class_from_participant_name(name: str) -> str:
     name = name.strip('"')
+    name = re.sub(r'</?[a-zA-Z0-9_.-]+>', '', name) # Strip HTML tags like <u> and </u>
     if ':' in name:
         parts = name.split(':')
         # e.g. logueado:Empleado -> Empleado, or :Empleado -> Empleado
@@ -370,6 +371,8 @@ def validate(docs_dir: str, entrega_dir: str) -> Dict[str, List[str]]:
             is_used_in_seq = class_name in seq_class_methods and meth in seq_class_methods[class_name]
             is_used_in_sm = meth in state_machine_methods
             if not is_used_in_seq and not is_used_in_sm:
+                if class_name in docs_classes and meth in docs_classes[class_name].methods:
+                    continue
                 discrepancies.append(
                     f"Unused Method: Method '{meth}()' of class '{class_name}' is defined in the class diagram "
                     f"but is never used in the sequence diagrams or state machine diagrams."

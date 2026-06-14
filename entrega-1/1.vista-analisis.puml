@@ -5,7 +5,6 @@ class Empleado <<entity>> {
   nombre
   getCM()
   esTuUsuario()
-  mostrarCM()
 }
 
 class Usuario <<entity>> {
@@ -28,6 +27,7 @@ class GestorRegRecepBolsin <<control>> {
   regRecepBolsin()
   getCMEmpleado()
   getBolsinesEnviados()
+  buscarDatosBolsin()
   tomarSelecBolsin()
   getRemitosAsociados()
   getDocumentacionAsociada()
@@ -96,9 +96,7 @@ class CambioEstadoBolsin <<entity>> {
   fechaHoraInicio
   esActual()
   new()
-  setEstado()
   setFechaHoraFin()
-  setResponsableCE()
   sosEnviado()
 }
 
@@ -156,7 +154,6 @@ class Documentacion <<entity>> {
   darDeBaja()
   desasociarBolsin()
   enviar()
-  getNumero()
   getAsunto()
   new()
   noRecibir()
@@ -174,9 +171,7 @@ class CambioEstadoDocumentacion <<entity>> {
   fechaHoraFin
   fechaHoraInicio
   new()
-  setEstado()
   setFechaHoraFin()
-  setResponsableCE()
   sosActual()
 }
 
