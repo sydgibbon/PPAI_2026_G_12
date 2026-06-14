@@ -1,30 +1,35 @@
 @startuml Realización de Análisis del CU 28 Registrar recepción de Bolsín - Vista Dinámica
-skinparam sequenceParticipant underline
-skinparam roundcorner 30
 
-actor ":EncargadoDeBolsines" as EB
-boundary ":PantallaRegRecepBolsin" as pantalla
-control ":GestorRegRecepBolsin" as gestor
-entity "activa:Sesion" as Sesion
-entity ":Empleado" as Empleado #OrangeRed
-entity "logueado:Empleado" as LogEmp 
-entity ":Bolsin" as Bolsin #OrangeRed
-entity "actual:ComisionMedica" as CMEmp
-entity "actual:ComisionMedica" as CMBolsin
-entity ":CambioEstadoBolsin" as CambioEstadoBolsin #OrangeRed
-entity "actual:CambioEstadoBolsin" as cambioEstadoActual
-entity "nuevo:CambioEstadoBolsin" as nuevoCambioEstado
-entity "actual:Estado" as estadoActual
-entity ":Estado" as Estado #OrangeRed
-entity ":Remito" as Remito #OrangeRed
-entity ":DetalleRemito" as DetalleRemito #OrangeRed
-entity "seleccionado:Bolsin" as bolsinSeleccionado
-entity "actual:CambioEstadoDocumentacion" as estadoActualDocumentacion
-entity ":CambioEstadoDocumentacion" as CEDoc #OrangeRed
-entity "nuevo:CambioEstadoDocumentacion" as nuevoEstadoDocumentacion
-entity "actual:Documentacion" as documentacionSeleccionada
-entity "actual:TipoDocumento" as TipoDocumento
-participant "29 Notificar Recepción de Bolsin" as casoDeUso29 #8cbce4
+skinparam participant<<rd>> {
+    RoundCorner 30
+    BackgroundColor #8cbce4
+}
+
+hide stereotype
+
+actor "<u>:EncargadoDeBolsines</u>" as EB
+boundary "<u>:PantallaRegRecepBolsin</u>" as pantalla
+control "<u>:GestorRegRecepBolsin</u>" as gestor
+entity "<u>activa:Sesion</u>" as Sesion
+entity "<u>:Empleado</u>" as Empleado #OrangeRed
+entity "<u>logueado:Empleado</u>" as LogEmp 
+entity "<u>:Bolsin</u>" as Bolsin #OrangeRed
+entity "<u>actual:ComisionMedica</u>" as CMEmp
+entity "<u>actual:ComisionMedica</u>" as CMBolsin
+entity "<u>:CambioEstadoBolsin</u>" as CambioEstadoBolsin #OrangeRed
+entity "<u>actual:CambioEstadoBolsin</u>" as cambioEstadoActual
+entity "<u>nuevo:CambioEstadoBolsin</u>" as nuevoCambioEstado
+entity "<u>actual:Estado</u>" as estadoActual
+entity "<u>:Estado</u>" as Estado #OrangeRed
+entity "<u>:Remito</u>" as Remito #OrangeRed
+entity "<u>:DetalleRemito</u>" as DetalleRemito #OrangeRed
+entity "<u>seleccionado:Bolsin</u>" as bolsinSeleccionado
+entity "<u>actual:CambioEstadoDocumentacion</u>" as estadoActualDocumentacion
+entity "<u>:CambioEstadoDocumentacion</u>" as CEDoc #OrangeRed
+entity "<u>nuevo:CambioEstadoDocumentacion</u>" as nuevoEstadoDocumentacion
+entity "<u>actual:Documentacion</u>" as documentacionSeleccionada
+entity "<u>actual:TipoDocumento</u>" as TipoDocumento
+Participant "29 Notificar Recepción de Bolsin" as casoDeUso29 <<rd>>
 
 
 '"29. Notificar Recepción de Bolsin"
@@ -37,35 +42,39 @@ gestor -> Empleado : //*//esTuUsuario()
 gestor -> gestor : getCMEmpleado()
 gestor -> LogEmp : getCM()
 LogEmp -> CMEmp : getNombre()
-
+gestor -> pantalla : mostrarCMEmpleado()
 gestor -> gestor : getBolsinesEnviados()
-gestor -> Bolsin : //*//tenesEstaCMDestino()
-loop Mientras hayan bolsines asociados a CM Destino
-    gestor -> Bolsin : esEnviado()
-    Bolsin -> CambioEstadoBolsin : //*//esActual()
-    Bolsin -> cambioEstadoActual : sosEnviado()
-    cambioEstadoActual -> estadoActual : esEnviado()
-end
-loop Mientras hayan bolsines enviados asociados a CM Destino
+
+group loop buscar bolsines enviados[Mientras hayan bolsines asociados a CM Destino]
+    gestor -> Bolsin : tenesEstaCMDestino()
+    gestor -> Bolsin : sosEnviado()
+    group loop para todos los bolsines de CM[Mientras haya bolsines]
+        Bolsin -> CambioEstadoBolsin : //*//esActual()
+        Bolsin -> cambioEstadoActual : sosEnviado()
+        cambioEstadoActual -> estadoActual : esEnviado()
+    end
+
+gestor -> gestor : buscarDatosBolsin()
+
     gestor -> Bolsin : getNroPrecinto()
     gestor -> Bolsin : getCMOrigen()
     Bolsin -> CMBolsin : getNombre()
 end
 
-gestor -> pantalla : mostrarCMEmpleado()
 gestor -> pantalla : mostrarDatosBolsinesEnviados()
+gestor -> pantalla : habilitarOpcSelección()
 EB -> pantalla : tomarSelecBolsin()
 pantalla -> gestor : tomarSelecBolsin()
 gestor -> gestor : getRemitosAsociados()
+gestor -> gestor : getDocumentacionAsociada()
 gestor -> bolsinSeleccionado : obtenerInformacionRemito()
 loop Mientras hayan remitos asociados al Bolsin Seleccionado
     bolsinSeleccionado -> Remito : getNumero()
     bolsinSeleccionado -> Remito : buscarDocumentacion()
     loop Mientras hayan DetalleRemitos asociados
         Remito -> DetalleRemito : getDocumentacion()
-        DetalleRemito -> documentacionSeleccionada : getDatosDocumentacion()
-        documentacionSeleccionada -> documentacionSeleccionada : getNumero()
-        documentacionSeleccionada -> documentacionSeleccionada : getTipoDocumento()
+        DetalleRemito -> documentacionSeleccionada : getAsunto()
+        DetalleRemito -> documentacionSeleccionada : getTipoDocumento()
         documentacionSeleccionada -> TipoDocumento : getNombre()
     end
 end
@@ -79,18 +88,29 @@ EB -> pantalla : tomarConfirmacion()
 pantalla -> gestor : tomarConfirmacion()
 
 'Actualizacion de estados
-
-gestor -> gestor : buscarEstadosAAsignar()
-' Buscar estado Recibido en CM destino para Bolsin
-gestor -> Estado : //*//esAmbitoBolsin()
-gestor -> Estado : //*//esRecibido()
-' Buscar estado Recibido y Aceptado para Remito
-gestor -> Estado : //*//esAmbitoRemito()
-gestor -> Estado : //*//esRecibidoYAceptado()
-' Buscar estado Recibida y Aceptada para Documentacion
-gestor -> Estado : //*//esAmbitoDocumentacion()
-gestor -> Estado : //*//esRecibidaYAceptada()
 gestor -> gestor : getFechaYHoraActual()
+gestor -> gestor : buscarEstadoRecibido()
+' Buscar estado Recibido en CM destino para Bolsin
+
+group loop estados para Bolsin[Mientras haya estados]
+    gestor -> Estado : esAmbitoBolsin()
+    gestor -> Estado : esRecibido()
+end
+
+gestor -> gestor : buscarEstadoRecibidoYAceptado()
+' Buscar estado Recibido y Aceptado para Remito
+group loop estados para remito[Mientras haya estados]
+    gestor -> Estado : esAmbitoRemito()
+    gestor -> Estado : esRecibidoYAceptado()
+end
+gestor -> gestor : buscarEstadoRecibidaYAceptada()
+' Buscar estado Recibida y Aceptada para Documentacion
+group loop estados para documentación[Mientras haya estados]
+    gestor -> Estado : esAmbitoDocumentacion()
+    gestor -> Estado : esRecibidaYAceptada()
+end
+
+
 'gestor -> Sesion : getUsuario() lo hice más arriba
 gestor -> gestor : confirmarRecepcion()
 gestor -> bolsinSeleccionado : recibir()
@@ -98,7 +118,6 @@ bolsinSeleccionado -> bolsinSeleccionado : obtenerEstadoActual()
 bolsinSeleccionado -> cambioEstadoActual : setFechaHoraFin()
 bolsinSeleccionado -> bolsinSeleccionado : crearCEBolsin()
 bolsinSeleccionado --> nuevoCambioEstado ** : new()
-bolsinSeleccionado -> bolsinSeleccionado : setEstado()
 
 bolsinSeleccionado -> bolsinSeleccionado : recibirAceptarRemito()
 
@@ -115,7 +134,7 @@ loop Mientras hayan remitos asociados al bolsín seleccionado
         documentacionSeleccionada -> estadoActualDocumentacion : setFechaHoraFin()
         documentacionSeleccionada -> documentacionSeleccionada : crearCEDocumentacion()
         documentacionSeleccionada --> nuevoEstadoDocumentacion ** : new()
-        documentacionSeleccionada -> documentacionSeleccionada : setEstado()
+        
     end
 end
 gestor -> gestor : llamarCUNotifRecepBolsin()
