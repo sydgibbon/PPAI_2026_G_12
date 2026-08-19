@@ -1,0 +1,51 @@
+@startuml Descomposición por subdominios
+
+title Descomposición por subdominios
+
+hide stereotype
+skinparam shadowing false
+skinparam linetype polyline
+skinparam rectangle {
+  BackgroundColor #D9D9D9
+  BorderColor #7F7F7F
+}
+skinparam usecase {
+  BorderColor #333333
+}
+skinparam usecase<<core>> {
+  BackgroundColor #F5C6CB
+}
+skinparam usecase<<soporte>> {
+  BackgroundColor #C3E6CB
+}
+skinparam usecase<<generico>> {
+  BackgroundColor #BEE5EB
+}
+
+together {
+  rectangle "Service Containment Space - Core" as SCSCore {
+    usecase "Gestión de Bolsines" as C1 <<core>>
+    usecase "Recepción de Bolsines" as C2 <<core>>
+  }
+
+  rectangle "Service Containment Space - Soporte" as SCSSoporte {
+    usecase "Documentación" as S1 <<soporte>>
+    usecase "Remitos" as S2 <<soporte>>
+    usecase "Comisiones Médicas" as S3 <<soporte>>
+    usecase "Seguimiento de Bolsines" as S4 <<soporte>>
+  }
+}
+
+rectangle "Service Containment Space - Genéricos" as SCSGen {
+  usecase "Usuarios" as G1 <<generico>>
+  usecase "Integración Microsoft Graph" as G2 <<generico>>
+  usecase "Integración GPS Tracker" as G3 <<generico>>
+  usecase "Integración Google Maps" as G4 <<generico>>
+  usecase "Integración Power BI" as G5 <<generico>>
+}
+
+SCSCore -[hidden]right- SCSSoporte
+SCSCore -[hidden]down- SCSGen
+SCSSoporte -[hidden]down- SCSGen
+
+@enduml

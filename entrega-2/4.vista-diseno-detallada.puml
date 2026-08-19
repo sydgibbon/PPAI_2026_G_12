@@ -1,0 +1,144 @@
+@startuml Vista Arquitectónica de Diseño
+
+title Vista Arquitectónica de Diseño
+
+top to bottom direction
+skinparam shadowing false
+skinparam componentStyle uml2
+skinparam linetype polyline
+
+skinparam component<<subsystem>> {
+  BackgroundColor #BEE5EB
+}
+skinparam component<<microservice>> {
+  BackgroundColor #D6EAF8
+}
+
+component "WebUI" as WebUI <<subsystem>> {
+  [UsuarioPresWeb]
+  [BolsinPresWeb]
+  [RecepcionPresWeb]
+  [SeguimientoPresWeb]
+  [ReportesPresWeb]
+}
+
+component "WebAPIGateway" as GW {
+  [EnrutadorWeb]
+}
+
+() "IWebUIRestAPI" as IWeb
+[EnrutadorWeb] -() IWeb
+[UsuarioPresWeb] --( IWeb
+[BolsinPresWeb] --( IWeb
+[RecepcionPresWeb] --( IWeb
+[SeguimientoPresWeb] --( IWeb
+[ReportesPresWeb] --( IWeb
+
+component "ServicioUsuario" as ServicioUsuario <<microservice>> {
+  [Usuario]
+  [Permiso]
+  [Sesion]
+  [PersistenciaUsuario]
+}
+
+component "ServicioBolsines" as ServicioBolsines <<microservice>> {
+  [GestorBolsines]
+  [Bolsin]
+  [Remito]
+  [Documentacion]
+  [ComisionMedica]
+  [PersistenciaBolsines]
+}
+
+component "ServicioSeguimiento" as ServicioSeguimiento <<microservice>> {
+  [GestorSeguimiento]
+  [AdaptadorGPS]
+  [AdaptadorXTR4500L]
+  [AdaptadorNavTrack]
+  [AdaptadorGeoPulse]
+  [AdaptadorGoogleMaps]
+  [PersistenciaSeguimiento]
+}
+
+component "ServicioNotificaciones" as ServicioNotificaciones <<microservice>> {
+  [GeneradorNotificacionesMail]
+  [AdaptadorMicrosoftGraph]
+  [PersistenciaNotificaciones]
+}
+
+component "ServicioReportes" as ServicioReportes <<microservice>> {
+  [GestorReportes]
+  [AdaptadorPowerBI]
+  [PersistenciaReportes]
+}
+
+() "IAutenticacionRestAPI" as IAuth
+() "IBolsinesRestAPI" as IBol
+() "ISeguimientoRestAPI" as ISeg
+() "INotificacionesRestAPI" as INot
+() "IReportesRestAPI" as IRep
+() "IMicrosoftGraph" as IGraph
+() "IGpsTracker" as IGPS
+() "IGoogleMaps" as IMaps
+() "IPowerBI" as IPBI
+() "IXTR4500L" as IXTR
+() "INavTrack" as INav
+() "IGeoPulse" as IGeo
+() "IBDUsuarios" as IBDUsr
+() "IBDBolsines" as IBDBol
+() "IBDSeguimiento" as IBDSeg
+() "IBDNotificaciones" as IBDNot
+() "IBDReportes" as IBDRep
+
+ServicioUsuario -() IAuth
+ServicioBolsines -() IBol
+ServicioSeguimiento -() ISeg
+ServicioNotificaciones -() INot
+ServicioReportes -() IRep
+
+[EnrutadorWeb] --( IAuth
+[EnrutadorWeb] --( IBol
+[EnrutadorWeb] --( ISeg
+[EnrutadorWeb] --( IRep
+
+[GestorBolsines] --( INot
+[GestorSeguimiento] --( IBol
+
+[AdaptadorMicrosoftGraph] --( IGraph
+[AdaptadorGPS] --( IGPS
+[AdaptadorGoogleMaps] --( IMaps
+[AdaptadorPowerBI] --( IPBI
+
+[AdaptadorXTR4500L] -() IXTR
+[AdaptadorNavTrack] -() INav
+[AdaptadorGeoPulse] -() IGeo
+[AdaptadorGPS] --( IXTR
+[AdaptadorGPS] --( INav
+[AdaptadorGPS] --( IGeo
+
+database "BDUsuarios" as DBUsr
+database "BDBolsines" as DBBol
+database "BDSeguimiento" as DBSeg
+database "BDNotificaciones" as DBNot
+database "BDReportes" as DBRep
+
+DBUsr -() IBDUsr
+DBBol -() IBDBol
+DBSeg -() IBDSeg
+DBNot -() IBDNot
+DBRep -() IBDRep
+
+[PersistenciaUsuario] --( IBDUsr
+[PersistenciaBolsines] --( IBDBol
+[PersistenciaSeguimiento] --( IBDSeg
+[PersistenciaNotificaciones] --( IBDNot
+[PersistenciaReportes] --( IBDRep
+
+WebUI -[hidden]down- GW
+GW -[hidden]down- ServicioBolsines
+GW -[hidden]down- ServicioUsuario
+GW -[hidden]down- ServicioSeguimiento
+GW -[hidden]down- ServicioNotificaciones
+GW -[hidden]down- ServicioReportes
+
+@enduml

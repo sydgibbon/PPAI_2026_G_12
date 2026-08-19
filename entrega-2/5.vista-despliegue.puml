@@ -1,0 +1,134 @@
+@startuml Vista Arquitectónica de Despliegue
+
+title Vista Arquitectónica de Despliegue
+
+skinparam shadowing false
+skinparam componentStyle uml2
+
+skinparam component<<subsystem>> {
+  BackgroundColor #BEE5EB
+}
+skinparam component<<gateway>> {
+  BackgroundColor #D6C3E8
+}
+skinparam component<<microservice>> {
+  BackgroundColor #D5F5E3
+}
+skinparam database {
+  BackgroundColor #FFF2CC
+}
+skinparam cloudBackgroundColor transparent
+skinparam cloudBorderColor transparent
+skinparam cloudFontColor transparent
+skinparam cloudFontSize 0
+
+node "Cliente Web" as NCliente {
+  [ExploradorWeb]
+}
+
+cloud Amazon {
+  node "Servidor Amazon Web y Gateway" as NWeb {
+    [WebServer]
+    [WebUI] <<subsystem>>
+    [WebAPIGateway] <<gateway>>
+  }
+
+  node "Servidor Amazon Bolsines" as NBol {
+    [ServicioBolsines] as Bol <<microservice>> #F5C6CB
+    database "BDBolsines" as DBBol
+  }
+
+  node "Servidor Amazon Espejo Bolsines" as NBolEsp {
+    [ServicioBolsines] as BolEsp <<microservice>> #F5C6CB
+    database "BDBolsines" as DBBolEsp
+  }
+
+  node "Servidor Amazon Seguimiento" as NSeg {
+    [ServicioSeguimiento] as Seg <<microservice>> #C3E6CB
+    database "BDSeguimiento" as DBSeg
+  }
+
+  node "Servidor Amazon Espejo Seguimiento" as NSegEsp {
+    [ServicioSeguimiento] as SegEsp <<microservice>> #C3E6CB
+    database "BDSeguimiento" as DBSegEsp
+  }
+
+  node "Servidor Amazon Identidad" as NId {
+    [ServicioIdentidad] as Id <<microservice>> #BEE5EB
+    database "BDIdentidad" as DBId
+  }
+
+  node "Servidor Amazon Espejo Identidad" as NIdEsp {
+    [ServicioIdentidad] as IdEsp <<microservice>> #BEE5EB
+    database "BDIdentidad" as DBIdEsp
+  }
+
+  node "Servidor Amazon Notificaciones" as NNot {
+    [ServicioNotificaciones] as Notif <<microservice>> #BEE5EB
+    database "BDNotificaciones" as DBNot
+  }
+
+  node "Servidor Amazon Espejo Notificaciones" as NNotEsp {
+    [ServicioNotificaciones] as NotifEsp <<microservice>> #BEE5EB
+    database "BDNotificaciones" as DBNotEsp
+  }
+
+  node "Servidor Amazon Reportes" as NRep {
+    [ServicioReportes] as Rep <<microservice>> #BEE5EB
+    database "BDReportes" as DBRep
+  }
+
+  node "Servidor Amazon Espejo Reportes" as NRepEsp {
+    [ServicioReportes] as RepEsp <<microservice>> #BEE5EB
+    database "BDReportes" as DBRepEsp
+  }
+}
+
+node "Servidor Microsoft Graph" as NGraph {
+  [API Outlook Microsoft Graph]
+}
+
+node "GPS Tracker" as NGPS {
+  [API GPS Tracker]
+}
+
+node "Servidor Google Maps" as NMaps {
+  [API Google Maps]
+}
+
+node "Servidor Power BI" as NPBI {
+  [API Power BI]
+}
+
+NCliente --> NWeb
+
+NBol --> NWeb
+NBolEsp --> NWeb
+NBol --> NBolEsp : Database Mirroring
+
+NSeg --> NWeb
+NSegEsp --> NWeb
+NSeg --> NSegEsp : Database Mirroring
+
+NId --> NWeb
+NIdEsp --> NWeb
+NId --> NIdEsp : Database Mirroring
+
+NNot --> NWeb
+NNotEsp --> NWeb
+NNot --> NNotEsp : Database Mirroring
+
+NRep --> NWeb
+NRepEsp --> NWeb
+NRep --> NRepEsp : Database Mirroring
+
+NNot --> NGraph
+NNotEsp --> NGraph
+NSeg --> NGPS
+NSegEsp --> NGPS
+NSeg --> NMaps
+NSegEsp --> NMaps
+NRep --> NPBI
+NRepEsp --> NPBI
+
+@enduml

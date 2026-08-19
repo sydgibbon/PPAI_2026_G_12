@@ -1,0 +1,87 @@
+@startuml Vista Arquitectónica de Diseño Global
+
+title Vista Arquitectónica de Diseño Global
+
+left to right direction
+skinparam shadowing false
+skinparam componentStyle uml2
+skinparam linetype ortho
+
+skinparam rectangle<<columna>> {
+  BorderColor transparent
+  BackgroundColor transparent
+  FontColor transparent
+}
+
+skinparam component<<subsystem>> {
+  BackgroundColor #BEE5EB
+}
+skinparam component<<gateway>> {
+  BackgroundColor #D6C3E8
+}
+skinparam component<<externo>> {
+  BackgroundColor #5B9BD5
+  FontColor white
+}
+skinparam database {
+  BackgroundColor #FFF2CC
+}
+
+rectangle "izq" <<columna>> as Izq {
+  [WebUI] <<subsystem>>
+  rectangle "Externos" as Ext {
+    [Microsoft Graph] as Graph <<externo>>
+    [GPS Tracker] as GPS <<externo>>
+    [Google Maps] as Maps <<externo>>
+    [Power BI] as PBI <<externo>>
+  }
+  [WebUI] -[hidden]down- Ext
+}
+
+rectangle "med" <<columna>> as Med {
+  [WebAPIGateway] <<gateway>>
+}
+
+rectangle "der" <<columna>> as Der {
+  [ServicioBolsines] <<microservice>> #F5C6CB
+  database "BDBolsines"
+  [ServicioBolsines] -right- BDBolsines
+
+  [ServicioSeguimiento] <<microservice>> #C3E6CB
+  database "BDSeguimiento"
+  [ServicioSeguimiento] -right- BDSeguimiento
+
+  [ServicioUsuario] <<microservice>> #BEE5EB
+  database "BDUsuarios"
+  [ServicioUsuario] -right- BDUsuarios
+
+  [ServicioNotificaciones] <<microservice>> #BEE5EB
+  database "BDNotificaciones"
+  [ServicioNotificaciones] -right- BDNotificaciones
+
+  [ServicioReportes] <<microservice>> #BEE5EB
+  database "BDReportes"
+  [ServicioReportes] -right- BDReportes
+
+  [ServicioBolsines] -[hidden]down- [ServicioSeguimiento]
+  [ServicioSeguimiento] -[hidden]down- [ServicioUsuario]
+  [ServicioUsuario] -[hidden]down- [ServicioNotificaciones]
+  [ServicioNotificaciones] -[hidden]down- [ServicioReportes]
+}
+
+Izq -[hidden]right- Med
+Med -[hidden]right- Der
+
+[WebUI] --> [WebAPIGateway]
+Graph --> [WebAPIGateway]
+GPS --> [WebAPIGateway]
+Maps --> [WebAPIGateway]
+PBI --> [WebAPIGateway]
+
+[WebAPIGateway] --> [ServicioBolsines]
+[WebAPIGateway] --> [ServicioSeguimiento]
+[WebAPIGateway] --> [ServicioUsuario]
+[WebAPIGateway] --> [ServicioNotificaciones]
+[WebAPIGateway] --> [ServicioReportes]
+
+@enduml
