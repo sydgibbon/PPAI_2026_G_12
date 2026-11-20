@@ -19,13 +19,11 @@ export class EnBolsinSaliente extends EstadoDocumentacion {
     cambiosEstado: CambioEstadoDocumentacion[],
     responsable: Empleado,
   ): void {
-    this.transicionar(
-      documentacion,
-      fechaHoraActual,
-      cambiosEstado,
-      responsable,
-      () => new EnRemito(),
-    );
+    this.cambiarEstado(fechaHoraActual, cambiosEstado, responsable);
+    const nuevoEstado = new EnRemito();
+    const nuevoCambioEstado = this.crearCambioEstado(fechaHoraActual, nuevoEstado, responsable);
+    documentacion.setEstadoActual(nuevoEstado);
+    documentacion.agregarCambioEstado(nuevoCambioEstado);
   }
 
   public override enviar(
@@ -34,12 +32,10 @@ export class EnBolsinSaliente extends EstadoDocumentacion {
     cambiosEstado: CambioEstadoDocumentacion[],
     responsable: Empleado,
   ): void {
-    this.transicionar(
-      documentacion,
-      fechaHoraActual,
-      cambiosEstado,
-      responsable,
-      () => new EnBolsinEnviado(),
-    );
+    this.cambiarEstado(fechaHoraActual, cambiosEstado, responsable);
+    const nuevoEstado = new EnBolsinEnviado();
+    const nuevoCambioEstado = this.crearCambioEstado(fechaHoraActual, nuevoEstado, responsable);
+    documentacion.setEstadoActual(nuevoEstado);
+    documentacion.agregarCambioEstado(nuevoCambioEstado);
   }
 }

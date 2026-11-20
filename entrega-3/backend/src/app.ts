@@ -1,7 +1,7 @@
 import cors from 'cors';
 import express, { type Express } from 'express';
-import { PantallaRegRecepBolsin } from './controller/PantallaRegRecepBolsin.js';
-import { GestorRegRecepBolsin } from './service/GestorRegRecepBolsin.js';
+import { PantallaRegRecepBolsin } from './boundaries/PantallaRegRecepBolsin.js';
+import { GestorRegRecepBolsin } from './controller/GestorRegRecepBolsin.js';
 
 export function createApp(): { app: Express; gestor: GestorRegRecepBolsin } {
   const app = express();

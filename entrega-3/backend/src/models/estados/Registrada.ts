@@ -18,12 +18,10 @@ export class Registrada extends EstadoDocumentacion {
     cambiosEstado: CambioEstadoDocumentacion[],
     responsable: Empleado,
   ): void {
-    this.transicionar(
-      documentacion,
-      fechaHoraActual,
-      cambiosEstado,
-      responsable,
-      () => new EnRemito(),
-    );
+    this.cambiarEstado(fechaHoraActual, cambiosEstado, responsable);
+    const nuevoEstado = new EnRemito();
+    const nuevoCambioEstado = this.crearCambioEstado(fechaHoraActual, nuevoEstado, responsable);
+    documentacion.setEstadoActual(nuevoEstado);
+    documentacion.agregarCambioEstado(nuevoCambioEstado);
   }
 }

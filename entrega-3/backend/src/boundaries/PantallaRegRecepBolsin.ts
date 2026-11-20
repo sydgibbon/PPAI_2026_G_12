@@ -1,11 +1,11 @@
 import { Router, type Request, type Response } from 'express';
-import type { AccionEstadoDocumentacion } from '../dto/documentacionDto.js';
-import { TransicionInvalidaError } from '../model/estados/TransicionInvalidaError.js';
+import type { AccionEstadoDocumentacion } from '../dtos/documentacionDto.js';
+import { TransicionInvalidaError } from '../models/estados/TransicionInvalidaError.js';
 import {
   DominioError,
   GestorRegRecepBolsin,
   TransicionConTrazaError,
-} from '../service/GestorRegRecepBolsin.js';
+} from '../controller/GestorRegRecepBolsin.js';
 
 export class PantallaRegRecepBolsin {
   public readonly router: Router;

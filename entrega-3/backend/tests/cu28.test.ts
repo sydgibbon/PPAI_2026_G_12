@@ -1,7 +1,7 @@
 import type { AddressInfo } from 'node:net';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createApp } from '../src/app.js';
-import { DominioError, GestorRegRecepBolsin } from '../src/service/GestorRegRecepBolsin.js';
+import { DominioError, GestorRegRecepBolsin } from '../src/controller/GestorRegRecepBolsin.js';
 
 describe('CU 28 — GestorRegRecepBolsin y API REST', () => {
   const serversToClose: Array<ReturnType<ReturnType<typeof createApp>['app']['listen']>> = [];

@@ -1,18 +1,18 @@
 import { describe, expect, it, vi } from 'vitest';
-import { ComisionMedica } from '../src/model/ComisionMedica.js';
-import { Documentacion } from '../src/model/Documentacion.js';
-import { Empleado } from '../src/model/Empleado.js';
-import { TipoDocumento } from '../src/model/TipoDocumento.js';
-import { DeBaja } from '../src/model/estados/DeBaja.js';
-import { EnBolsinEnviado } from '../src/model/estados/EnBolsinEnviado.js';
-import { EnBolsinSaliente } from '../src/model/estados/EnBolsinSaliente.js';
-import { EnRemito } from '../src/model/estados/EnRemito.js';
-import { NoRecibida } from '../src/model/estados/NoRecibida.js';
-import { ParaRedirigir } from '../src/model/estados/ParaRedirigir.js';
-import { RecibidaYAceptada } from '../src/model/estados/RecibidaYAceptada.js';
-import { RecibidaYRechazada } from '../src/model/estados/RecibidaYRechazada.js';
-import { Registrada } from '../src/model/estados/Registrada.js';
-import { TransicionInvalidaError } from '../src/model/estados/TransicionInvalidaError.js';
+import { ComisionMedica } from '../src/models/ComisionMedica.js';
+import { Documentacion } from '../src/models/Documentacion.js';
+import { Empleado } from '../src/models/Empleado.js';
+import { TipoDocumento } from '../src/models/TipoDocumento.js';
+import { DeBaja } from '../src/models/estados/DeBaja.js';
+import { EnBolsinEnviado } from '../src/models/estados/EnBolsinEnviado.js';
+import { EnBolsinSaliente } from '../src/models/estados/EnBolsinSaliente.js';
+import { EnRemito } from '../src/models/estados/EnRemito.js';
+import { NoRecibida } from '../src/models/estados/NoRecibida.js';
+import { ParaRedirigir } from '../src/models/estados/ParaRedirigir.js';
+import { RecibidaYAceptada } from '../src/models/estados/RecibidaYAceptada.js';
+import { RecibidaYRechazada } from '../src/models/estados/RecibidaYRechazada.js';
+import { Registrada } from '../src/models/estados/Registrada.js';
+import { TransicionInvalidaError } from '../src/models/estados/TransicionInvalidaError.js';
 
 type AccionNombre =
   | 'remitir'
@@ -299,7 +299,7 @@ describe('Patrón State en Documentacion', () => {
     }
   });
 
-  it('respeta exactamente la secuencia de mensajes de DiagramaSecuenciaDEFINITIVO.puml en EnBolsinEnviado.aceptar()', () => {
+  it('respeta exactamente la secuencia de mensajes de 2.vista-dinamica.puml en EnBolsinEnviado.aceptar()', () => {
     const { doc, empOrigen, empDestino, t0 } = crearContextoPrueba();
     doc.remitir(empOrigen, new Date(t0.getTime() + 1_000));
     doc.asociarBolsin(empOrigen, new Date(t0.getTime() + 2_000));

@@ -2,8 +2,8 @@
 
 Implementación académica en **TypeScript** del **Patrón State** aplicado a la entidad `Documentacion` dentro del **CU 28 — Registrar recepción de bolsín**, respetando como única fuente de verdad (SOT) los diagramas definitivos:
 
-- `entrega-3/DiagramaDeClasesDEFINITIVO.puml`
-- `entrega-3/DiagramaSecuenciaDEFINITIVO.puml`
+- `entrega-3/1.vista-estatica.puml`
+- `entrega-3/2.vista-dinamica.puml`
 - `entrega-1/3.maquina-estados.puml` (máquina completa de 9 estados y 14 transiciones)
 
 La arquitectura de capas y el flujo REST paso a paso siguen las convenciones de [`LiberaeMentis/dsi-implementaciones-uc`](https://github.com/LiberaeMentis/dsi-implementaciones-uc).
@@ -16,11 +16,11 @@ La arquitectura de capas y el flujo REST paso a paso siguen las convenciones de 
 entrega-3/
 ├── backend/                     # API REST Express + TypeScript (en memoria, puerto 8080)
 │   ├── src/
-│   │   ├── controller/          # Boundary: PantallaRegRecepBolsin.ts
-│   │   ├── service/             # Control: GestorRegRecepBolsin.ts (poblarDatos() en memoria)
-│   │   ├── model/               # Entidades de dominio (Context + State + Bolsín/Remito)
+│   │   ├── boundaries/          # Límites REST (boundary): PantallaRegRecepBolsin.ts
+│   │   ├── controller/          # Controlador de caso de uso: GestorRegRecepBolsin.ts
+│   │   ├── models/              # Entidades de dominio (Context + State + Bolsín/Remito)
 │   │   │   └── estados/         # EstadoDocumentacion (abstracta) + 9 estados concretos
-│   │   ├── dto/                 # DTOs de request/response
+│   │   ├── dtos/                # DTOs de request/response
 │   │   ├── app.ts
 │   │   └── index.ts
 │   └── tests/                   # Tests unitarios y E2E con Vitest
@@ -36,7 +36,7 @@ entrega-3/
 
 ## Cómo se implementa el Patrón State Académico
 
-A diferencia de variantes donde el Contexto calcula el siguiente estado o los métodos de transición no reciben historial, esta implementación sigue estrictamente el diseño de la cátedra definido en `DiagramaDeClasesDEFINITIVO.puml` y `DiagramaSecuenciaDEFINITIVO.puml`:
+A diferencia de variantes donde el Contexto calcula el siguiente estado o los métodos de transición no reciben historial, esta implementación sigue estrictamente el diseño de la cátedra definido en `1.vista-estatica.puml` y `2.vista-dinamica.puml`:
 
 1. **`Documentacion` (`<<Context>>`)** mantiene:
    - `estadoActual: EstadoDocumentacion` (inicializado en el constructor con `new Registrada()`).
@@ -81,4 +81,7 @@ pnpm run build
 pnpm run dev
 ```
 
-Luego abrí `http://localhost:3000` en tu navegador. El proxy de Vite redirige `/recepcion-bolsin/*` y `/documentaciones/*` hacia `http://localhost:8080`.
+Luego abrí la aplicación en tu navegador (el proxy de Vite redirige `/recepcion-bolsin/*` y `/documentaciones/*` hacia `http://localhost:8080`):
+
+- **`http://localhost:3000/`** — Aplicación limpia del caso de uso (**CU 28: Registrar recepción de bolsín**), sin ruido técnico ni trazas.
+- **`http://localhost:3000/debug`** — Panel técnico de la **Entrega 3**: visualizador SVG interactivo del Patrón State, pruebas de polimorfismo (transiciones válidas e inválidas), historial `CambioEstadoDocumentacion`, traza del último CU 28 confirmado y reinicio de datos demo.

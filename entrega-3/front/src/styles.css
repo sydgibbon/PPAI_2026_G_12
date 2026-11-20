@@ -79,6 +79,39 @@ code {
   border-bottom: 3px solid var(--accent);
 }
 
+.app-header--debug {
+  background: #1e293b;
+  border-bottom-color: #f59e0b;
+}
+
+.debug-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.debug-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.debug-banner-note {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  background: var(--surface-muted);
+  border: 1px dashed var(--border);
+  color: var(--text-muted);
+}
+
 .app-header__inner {
   max-width: 1380px;
   margin: 0 auto;

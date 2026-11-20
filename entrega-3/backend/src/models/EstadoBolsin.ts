@@ -23,7 +23,7 @@ export class EstadoBolsin {
     return this.nombre === 'Recibido en CM destino';
   }
 
-  /** Alias exacto del typo en DiagramaDeClasesDEFINITIVO.puml */
+  /** Alias exacto del typo en 1.vista-estatica.puml */
   public esRebidoEnCMDestino(): boolean {
     return this.esRecibidoEnCMDestino();
   }

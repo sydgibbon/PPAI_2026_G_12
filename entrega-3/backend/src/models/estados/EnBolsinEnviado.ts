@@ -34,13 +34,11 @@ export class EnBolsinEnviado extends EstadoDocumentacion {
     cambiosEstado: CambioEstadoDocumentacion[],
     responsable: Empleado,
   ): void {
-    this.transicionar(
-      documentacion,
-      fechaHoraActual,
-      cambiosEstado,
-      responsable,
-      () => new RecibidaYRechazada(),
-    );
+    this.cambiarEstado(fechaHoraActual, cambiosEstado, responsable);
+    const nuevoEstado = new RecibidaYRechazada();
+    const nuevoCambioEstado = this.crearCambioEstado(fechaHoraActual, nuevoEstado, responsable);
+    documentacion.setEstadoActual(nuevoEstado);
+    documentacion.agregarCambioEstado(nuevoCambioEstado);
   }
 
   public override redirigir(
@@ -49,13 +47,11 @@ export class EnBolsinEnviado extends EstadoDocumentacion {
     cambiosEstado: CambioEstadoDocumentacion[],
     responsable: Empleado,
   ): void {
-    this.transicionar(
-      documentacion,
-      fechaHoraActual,
-      cambiosEstado,
-      responsable,
-      () => new ParaRedirigir(),
-    );
+    this.cambiarEstado(fechaHoraActual, cambiosEstado, responsable);
+    const nuevoEstado = new ParaRedirigir();
+    const nuevoCambioEstado = this.crearCambioEstado(fechaHoraActual, nuevoEstado, responsable);
+    documentacion.setEstadoActual(nuevoEstado);
+    documentacion.agregarCambioEstado(nuevoCambioEstado);
   }
 
   public override noRecibir(
@@ -64,13 +60,11 @@ export class EnBolsinEnviado extends EstadoDocumentacion {
     cambiosEstado: CambioEstadoDocumentacion[],
     responsable: Empleado,
   ): void {
-    this.transicionar(
-      documentacion,
-      fechaHoraActual,
-      cambiosEstado,
-      responsable,
-      () => new NoRecibida(),
-    );
+    this.cambiarEstado(fechaHoraActual, cambiosEstado, responsable);
+    const nuevoEstado = new NoRecibida();
+    const nuevoCambioEstado = this.crearCambioEstado(fechaHoraActual, nuevoEstado, responsable);
+    documentacion.setEstadoActual(nuevoEstado);
+    documentacion.agregarCambioEstado(nuevoCambioEstado);
   }
 
   public override cambiarEstado(

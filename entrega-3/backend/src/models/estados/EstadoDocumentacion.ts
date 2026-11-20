@@ -139,18 +139,4 @@ export abstract class EstadoDocumentacion {
   ): CambioEstadoDocumentacion {
     return new CambioEstadoDocumentacion(fechaHoraActual, estado, responsable);
   }
-
-  protected transicionar(
-    documentacion: Documentacion,
-    fechaHoraActual: Date,
-    cambiosEstado: CambioEstadoDocumentacion[],
-    responsable: Empleado,
-    crearNuevoEstado: () => EstadoDocumentacion,
-  ): void {
-    this.cambiarEstado(fechaHoraActual, cambiosEstado, responsable);
-    const nuevoEstado = crearNuevoEstado();
-    const nuevoCambioEstado = this.crearCambioEstado(fechaHoraActual, nuevoEstado, responsable);
-    documentacion.setEstadoActual(nuevoEstado);
-    documentacion.agregarCambioEstado(nuevoCambioEstado);
-  }
 }

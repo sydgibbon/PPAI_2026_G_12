@@ -18,31 +18,31 @@ import type {
   SeleccionOpcionResponse,
   TransicionResponse,
   TrazaPasoDto,
-} from '../dto/documentacionDto.js';
-import { Bolsin } from '../model/Bolsin.js';
-import { CambioEstadoBolsin } from '../model/CambioEstadoBolsin.js';
-import type { CambioEstadoDocumentacion } from '../model/CambioEstadoDocumentacion.js';
-import { ComisionMedica } from '../model/ComisionMedica.js';
-import { DetalleRemito } from '../model/DetalleRemito.js';
-import { Documentacion } from '../model/Documentacion.js';
-import { Empleado } from '../model/Empleado.js';
-import { EstadoBolsin } from '../model/EstadoBolsin.js';
-import { EstadoRemito } from '../model/EstadoRemito.js';
-import { Remito } from '../model/Remito.js';
-import { Sesion } from '../model/Sesion.js';
-import { TipoDocumento } from '../model/TipoDocumento.js';
-import { Usuario } from '../model/Usuario.js';
-import { DeBaja } from '../model/estados/DeBaja.js';
-import { EnBolsinEnviado } from '../model/estados/EnBolsinEnviado.js';
-import { EnBolsinSaliente } from '../model/estados/EnBolsinSaliente.js';
-import { EnRemito } from '../model/estados/EnRemito.js';
-import type { EstadoDocumentacion } from '../model/estados/EstadoDocumentacion.js';
-import { NoRecibida } from '../model/estados/NoRecibida.js';
-import { ParaRedirigir } from '../model/estados/ParaRedirigir.js';
-import { RecibidaYAceptada } from '../model/estados/RecibidaYAceptada.js';
-import { RecibidaYRechazada } from '../model/estados/RecibidaYRechazada.js';
-import { Registrada } from '../model/estados/Registrada.js';
-import { TransicionInvalidaError } from '../model/estados/TransicionInvalidaError.js';
+} from '../dtos/documentacionDto.js';
+import { Bolsin } from '../models/Bolsin.js';
+import { CambioEstadoBolsin } from '../models/CambioEstadoBolsin.js';
+import type { CambioEstadoDocumentacion } from '../models/CambioEstadoDocumentacion.js';
+import { ComisionMedica } from '../models/ComisionMedica.js';
+import { DetalleRemito } from '../models/DetalleRemito.js';
+import { Documentacion } from '../models/Documentacion.js';
+import { Empleado } from '../models/Empleado.js';
+import { EstadoBolsin } from '../models/EstadoBolsin.js';
+import { EstadoRemito } from '../models/EstadoRemito.js';
+import { Remito } from '../models/Remito.js';
+import { Sesion } from '../models/Sesion.js';
+import { TipoDocumento } from '../models/TipoDocumento.js';
+import { Usuario } from '../models/Usuario.js';
+import { DeBaja } from '../models/estados/DeBaja.js';
+import { EnBolsinEnviado } from '../models/estados/EnBolsinEnviado.js';
+import { EnBolsinSaliente } from '../models/estados/EnBolsinSaliente.js';
+import { EnRemito } from '../models/estados/EnRemito.js';
+import type { EstadoDocumentacion } from '../models/estados/EstadoDocumentacion.js';
+import { NoRecibida } from '../models/estados/NoRecibida.js';
+import { ParaRedirigir } from '../models/estados/ParaRedirigir.js';
+import { RecibidaYAceptada } from '../models/estados/RecibidaYAceptada.js';
+import { RecibidaYRechazada } from '../models/estados/RecibidaYRechazada.js';
+import { Registrada } from '../models/estados/Registrada.js';
+import { TransicionInvalidaError } from '../models/estados/TransicionInvalidaError.js';
 
 export class DominioError extends Error {
   public readonly statusCode: number;
@@ -85,28 +85,28 @@ const OPCIONES_RECEPCION: OpcionRecepcionDto[] = [
     codigo: 1,
     titulo: 'El contenido del bolsín es igual al registrado',
     descripcion:
-      'Flujo principal del CU 28: marca el bolsín como Recibido en CM destino, los remitos como Recibido y Aceptado y la documentación como Recibida y Aceptada.',
+      'El contenido físico del bolsín coincide exactamente con los remitos y la documentación registrada.',
     habilitadaEnCu28: true,
   },
   {
     codigo: 2,
     titulo: 'No se recibe toda la documentación asociada a los remitos que contiene el bolsín',
     descripcion:
-      'Curso alternativo: la documentación faltante pasa a No Recibida. Podés simular esta transición por documento desde el Visualizador del Patrón State.',
+      'Falta parte de la documentación incluida en los remitos; la documentación faltante quedará registrada como No Recibida.',
     habilitadaEnCu28: false,
   },
   {
     codigo: 3,
     titulo: 'Existe documentación que no corresponde al destino (CM del usuario logueado)',
     descripcion:
-      'Curso alternativo: la documentación pasa a Recibida y Rechazada. Podés simular esta transición por documento desde el Visualizador del Patrón State.',
+      'Se recibió documentación dirigida a otra Comisión Médica; quedará marcada como Recibida y Rechazada para su devolución al origen.',
     habilitadaEnCu28: false,
   },
   {
     codigo: 4,
     titulo: 'La documentación se debe redirigir a otra área',
     descripcion:
-      'Curso alternativo (CMC): la documentación pasa a Para Redirigir. Podés simular esta transición por documento desde el Visualizador del Patrón State.',
+      'Documentación recibida en la Comisión Médica Central que debe derivarse internamente a otra área.',
     habilitadaEnCu28: false,
   },
 ];
@@ -125,7 +125,7 @@ export function obtenerNombreClaseEstado(estado: EstadoDocumentacion): EstadoCla
 }
 
 export class GestorRegRecepBolsin {
-  // Atributos del diagrama de clases (DiagramaDeClasesDEFINITIVO.puml)
+  // Atributos del diagrama de clases (1.vista-estatica.puml)
   private estadoBolsin: EstadoBolsin | null = null;
   private estadoRemito: EstadoRemito | null = null;
   private fechaHoraActual: Date | null = null;
@@ -502,7 +502,7 @@ export class GestorRegRecepBolsin {
     }
     if (!opcionMeta.habilitadaEnCu28) {
       throw new DominioError(
-        `La opción ${opcion} ("${opcionMeta.titulo}") corresponde a un curso alternativo no habilitado para confirmación masiva en este flujo. Seleccione la opción 1 para ejecutar la secuencia principal del CU 28 o pruebe los cursos alternativos en el Visualizador del Patrón State.`,
+        `Por el momento solo se encuentra habilitada la recepción con contenido conforme (opción 1). La opción ${opcion} ("${opcionMeta.titulo}") aún no está disponible en esta pantalla.`,
         400,
       );
     }
@@ -649,7 +649,7 @@ export class GestorRegRecepBolsin {
       }
     }
 
-    // Ejecución real del dominio según DiagramaSecuenciaDEFINITIVO.puml
+    // Ejecución real del dominio según 2.vista-dinamica.puml
     bolsin.recibir(
       this.estadoBolsin,
       this.estadoRemito,
@@ -682,7 +682,7 @@ export class GestorRegRecepBolsin {
       notificaciones.push({
         cmOrigen,
         destinatario: empOrigen ? empOrigen.getEmail() : 'mesa.entradas@srt.gob.ar',
-        asunto: `[CU 29] Bolsín #${bolsin.getNumeroBolsin()} (Precinto ${bolsin.getNroPrecinto()}) recibido conforme`,
+        asunto: `Recepción conforme — Bolsín #${bolsin.getNumeroBolsin()} (Precinto ${bolsin.getNroPrecinto()})`,
         cantidadDocumentos,
         estadoNotificado: 'Recibida y Aceptada',
       });

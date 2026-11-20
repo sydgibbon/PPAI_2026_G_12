@@ -19,13 +19,11 @@ export class NoRecibida extends EstadoDocumentacion {
     cambiosEstado: CambioEstadoDocumentacion[],
     responsable: Empleado,
   ): void {
-    this.transicionar(
-      documentacion,
-      fechaHoraActual,
-      cambiosEstado,
-      responsable,
-      () => new DeBaja(),
-    );
+    this.cambiarEstado(fechaHoraActual, cambiosEstado, responsable);
+    const nuevoEstado = new DeBaja();
+    const nuevoCambioEstado = this.crearCambioEstado(fechaHoraActual, nuevoEstado, responsable);
+    documentacion.setEstadoActual(nuevoEstado);
+    documentacion.agregarCambioEstado(nuevoCambioEstado);
   }
 
   public override registrar(
@@ -34,12 +32,10 @@ export class NoRecibida extends EstadoDocumentacion {
     cambiosEstado: CambioEstadoDocumentacion[],
     responsable: Empleado,
   ): void {
-    this.transicionar(
-      documentacion,
-      fechaHoraActual,
-      cambiosEstado,
-      responsable,
-      () => new Registrada(),
-    );
+    this.cambiarEstado(fechaHoraActual, cambiosEstado, responsable);
+    const nuevoEstado = new Registrada();
+    const nuevoCambioEstado = this.crearCambioEstado(fechaHoraActual, nuevoEstado, responsable);
+    documentacion.setEstadoActual(nuevoEstado);
+    documentacion.agregarCambioEstado(nuevoCambioEstado);
   }
 }
