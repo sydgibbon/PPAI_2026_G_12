@@ -1,0 +1,98 @@
+@startuml CU28_RegistrarRecepcionBolsin_State
+title CU 28 - Registrar recepción de bolsín\nRealización de diseño - Patrón State aplicado a Documentacion
+'autonumber
+hide footbox
+skinparam BoxPadding 10
+skinparam ParticipantPadding 8
+skinparam sequenceMessageAlign center
+skinparam noteBackgroundColor #FFF8DC
+skinparam sequenceParticipant underline
+
+
+'boundary ":PantallaRegRecepBolsin" as pantalla
+control ":GestorRegRecepBolsin" as gestor
+entity "actual:CambioEstadoBolsin" as cambioEstadoActual
+entity "nuevo:CambioEstadoBolsin" as nuevoCambioEstado
+'entity ":Estado" as Estado #OrangeRed
+'entity ":EstadoBolsin" as EstadoBolsin #OrangeRed
+'entity ":EstadoRemito" as EstadoRemito #OrangeRed
+entity ":Remito" as Remito #OrangeRed
+entity ":DetalleRemito" as DetalleRemito #OrangeRed
+entity "seleccionado:Bolsin" as bolsinSeleccionado
+entity ":Documentacion" as documentacionSeleccionada
+participant ":EnBolsinEnviado" as EstadoActualDoc
+
+entity "CambioEstadoDocumentacion" as CED #OrangeRed
+entity "actual:\nCambioEstadoDocumentacion" as CEDActual
+participant "nuevo:\nRecibidaYAceptada" as NuevoEstadoDoc
+entity "nuevo:\nCambioEstadoDocumentacion" as CEDNuevo
+
+'pantalla -> gestor : tomarConfirmacion()
+
+'Actualizacion de estados QUIZAS DEBA ELIMINARLO PORQUE SE MANTIENE IGUAL
+'gestor -> gestor : getFechaYHoraActual(): DateTime
+note over gestor, Remito
+Rediseño: el Gestor ya no busca el estado de Documentación, se elimina el loop asociado a esa búsqueda.
+El resto de los métodos de búsqueda de estado para Bolsin y Remito se mantienen como en el análisis 
+(para los estados RecibidoEnCMDestino y RecibidoYAceptado de Bolsin y Remito respectivamente),
+pero ahora apuntan a "EstadoBolsin" y "EstadoRemito" en sus loops respectivos, en lugar de a "Estado". 
+Se eliminan los métodos de búsqueda de ámbito.
+end note
+
+'gestor -> gestor : buscarEstadoRecibidoEnCMDestino(): EstadoBolsin
+' Buscar estado Recibido en CM destino para Bolsin
+
+'group loop estados para Bolsin[Mientras haya estados]
+    'gestor -> EstadoBolsin : esRecibidoEnCMDestino(): boolean
+    'gestor -> Estado : esRecibidoEnCMDestino(): boolean
+    'gestor -> Estado : esAmbitoBolsin(): boolean
+'end
+
+'gestor -> gestor : buscarEstadoRecibidoYAceptado(): EstadoRemito
+' Buscar estado Recibido y Aceptado para Remito
+'group loop estados para remito[Mientras haya estados]
+    'gestor -> EstadoRemito : esRecibidoYAceptado(): boolean
+    'gestor -> Estado : esRecibidoYAceptado(): boolean
+    'gestor -> Estado : esAmbitoRemito(): boolean
+'end
+
+'gestor -> gestor : confirmarRecepcion()
+gestor -> bolsinSeleccionado : recibir(estadoBolsin: EstadoBolsin, estadoRemito: EstadoRemito, fechaHoraActual: DateTime, estadoActual: CambioEstadoBolsin, responsable: Empleado)
+bolsinSeleccionado -> bolsinSeleccionado : obtenerEstadoActual(): CambioEstadoBolsin
+bolsinSeleccionado -> cambioEstadoActual : setFechaHoraFin(fechaHoraActual: DateTime)
+bolsinSeleccionado -> bolsinSeleccionado : crearCEBolsin(fechaHoraActual: DateTime,\nresponsable: Empleado, estado: EstadoBolsin)
+bolsinSeleccionado --> nuevoCambioEstado ** : new(): CambioEstadoBolsin
+
+bolsinSeleccionado -> bolsinSeleccionado : recibirAceptarRemito()
+
+loop Mientras hayan remitos asociados al bolsín seleccionado
+    bolsinSeleccionado -> Remito : recibirAceptar(estado: EstadoRemito, responsable: Empleado, fechaHoraActual: DateTime)
+    'bolsinSeleccionado -> Remito : recibirAceptar(estado: Estado, responsable: Empleado, fechaHoraActual: DateTime)
+    Remito -> Remito : setEstado(estado: EstadoRemito)
+    'Remito -> Remito : setEstado(estado: Estado)
+    Remito -> Remito : aceptarDocumentacion()
+    
+    loop Mientras hayan DetalleRemitos asociados al Remito
+        Remito -> DetalleRemito : aceptarDocumentacion(responsable: Empleado, fechaHoraActual: DateTime)
+        DetalleRemito -> documentacionSeleccionada : aceptar(responsable: Empleado, fechaHoraActual: DateTime)
+        documentacionSeleccionada -> EstadoActualDoc : aceptar(documentacion: Documentacion,\nfechaHoraActual: DateTime,\ncambiosEstado: CambioEstadoDocumentacion[],\nresponsable: Empleado)
+        EstadoActualDoc -> EstadoActualDoc: cambiarEstado(fechaHoraActual: DateTime, \nhistorial: CambioEstadoDocumentacion[], \nresponsable: Empleado)
+        EstadoActualDoc -> CED : //*//sosActual(): boolean
+        EstadoActualDoc -> CEDActual : setFechaHoraFin(fechaHoraActual: DateTime)
+        EstadoActualDoc -> EstadoActualDoc: crearEstado()
+        
+        EstadoActualDoc --> NuevoEstadoDoc **: new(): RecibidaYAceptada
+        EstadoActualDoc -> EstadoActualDoc: crearCambioEstado(fechaHoraActual: DateTime,\nestado: EstadoDocumentacion, responsable: Empleado)
+        
+
+        create CEDNuevo
+        EstadoActualDoc --> CEDNuevo : new(fechaHoraActual: DateTime, estado: EstadoDocumentacion, responsable: Empleado)
+        EstadoActualDoc -> documentacionSeleccionada : setEstadoActual(estado: EstadoDocumentacion)
+        EstadoActualDoc -> documentacionSeleccionada : agregarCambioEstado(cambioEstado: CambioEstadoDocumentacion)
+        
+    end
+end
+
+
+hide footbox
+@enduml

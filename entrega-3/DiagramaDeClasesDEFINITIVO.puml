@@ -1,0 +1,227 @@
+@startuml CU28_DiagramaClases_State
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor<<entity>> #D6EAF8
+    BackgroundColor<<Context>> #E0FFFF
+    BackgroundColor<<State>> #FDEBD0
+    BackgroundColor<<concrete>> #F8F9FA
+}
+
+' =========================================================
+' BOUNDARY Y CONTROL (desde el diagrama de secuencia)
+' =========================================================
+
+class GestorRegRecepBolsin <<control>> {
+    - estadoBolsin: EstadoBolsin
+    - estadoRemito: EstadoRemito
+    - fechaHoraActual: DateTime
+    - estadoActual: CambioEstadoBolsin
+    - responsable: Empleado
+}
+
+' =========================================================
+' ENTIDADES
+' =========================================================
+class Documentacion <<entity>> {
+    - asunto: String
+    - fechaPase: Date
+    - numero: int
+    + aceptar(responsable: Empleado, fechaHoraActual: DateTime)
+    + setEstadoActual(estado: EstadoDocumentacion): void
+    + agregarCambioEstado(cambioEstado: CambioEstadoDocumentacion): void
+}
+
+class CambioEstadoDocumentacion <<entity>> {
+    - fechaHoraInicio: DateTime
+    - fechaHoraFin: DateTime
+    + new(fechaHoraActual: DateTime, estado: EstadoDocumentacion, responsable: Empleado)
+    + setFechaHoraFin(fechaHoraActual: DateTime): void
+    + sosActual(): boolean
+}
+
+class ComisionMedica <<entity>> {
+    - nombre: String
+    + getNombre(): String
+}
+
+class TipoDocumento <<entity>> {
+    - nombre: String
+    + getNombre(): String
+}
+
+class Empleado <<entity>> {
+    - apellido: String
+    - nombre: String
+    - email: String
+}
+
+' --- Clases de la secuencia que no figuran en el diagrama de clases ---
+' (atributos y demás métodos: no definidos en ningún material)
+class Bolsin <<entity>> {
+    - fecha: Date
+    - numeroBolsin: int
+    - numeroPrecinto: int
+    - peso: float
+    + recibir(estadoBolsin: EstadoBolsin, estadoRemito: EstadoRemito, fechaHoraActual: DateTime, estadoActual: CambioEstadoBolsin, responsable: Empleado)
+    + obtenerEstadoActual(): CambioEstadoBolsin
+    + crearCEBolsin(fechaHoraActual: DateTime, responsable: Empleado, estado: EstadoBolsin)
+    + recibirAceptarRemito()
+}
+
+class CambioEstadoBolsin <<entity>> {
+    - fechaHoraFin: DateTime
+    - fechaHoraInicio: DateTime
+    + setFechaHoraFin(fechaHoraActual: DateTime)
+    + new(): CambioEstadoBolsin
+}
+
+class Remito <<entity>> {
+    - fecha: DateTime
+    - numero: int
+    + recibirAceptar(estado: EstadoRemito, responsable: Empleado, fechaHoraActual: DateTime)
+    + setEstado(estado: EstadoRemito)
+    + aceptarDocumentacion()
+}
+
+class DetalleRemito <<entity>> {
+    - areaCMDestino: String
+    + aceptarDocumentacion(responsable: Empleado, fechaHoraActual: DateTime)
+}
+
+' =========================================================
+' ESTADOS DE BOLSIN Y REMITO (solo figuran en el bloque de relaciones)
+' =========================================================
+class EstadoBolsin <<entity>> {
+    - nombre: String
+    - descripcion: String
+    + esRebidoEnCMDestino(): boolean
+}
+
+class EstadoRemito <<entity>> {
+    - nombre: String
+    - descripcion: String
+    + esRecibidoYAceptado(): boolean
+}
+
+
+' =========================================================
+' ESTADOS DE DOCUMENTACION (patrón State)
+' =========================================================
+abstract class EstadoDocumentacion <<abstract>> {
+    + remitir(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + quitarDeRemito(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + asociarBolsin(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + desasociarBolsin(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + enviar(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + aceptar(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + rechazar(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + redirigir(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + noRecibir(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + darDeBaja(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + registrar(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + cambiarEstado(fechaHoraActual: DateTime, historial: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + crearCambioEstado(fechaHoraActual: DateTime, estado: EstadoDocumentacion, responsable: Empleado): CambioEstadoDocumentacion
+}
+
+class Registrada <<state>> {
+    + new(): Registrada
+   ' + remitir(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+}
+
+class EnRemito <<state>> {
+    + new(): EnRemito
+    '+ quitarDeRemito(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    '+ asociarBolsin(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+}
+
+class EnBolsinSaliente <<state>> {
+    + new(): EnBolsinSaliente
+    '+ desasociarBolsin(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    '+ enviar(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+}
+
+class EnBolsinEnviado <<state>> {
+    + new(): EnBolsinEnviado
+    + aceptar(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    + cambiarEstado(fechaHoraActual: DateTime, historial: CambioEstadoDocumentacion[], responsable: Empleado): void
+    '+ rechazar(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+   ' + redirigir(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    '+ noRecibir(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    ' agregado desde el diagrama de secuencia (sin visibilidad ni retorno indicados)
+    + crearEstado()
+    + crearCambioEstado(fechaHoraActual: DateTime, estado: EstadoDocumentacion, responsable: Empleado)
+}
+
+class NoRecibida <<state>> {
+    + new(): NoRecibida
+    '+ darDeBaja(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    '+ registrar(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+}
+
+class ParaRedirigir <<state>> {
+    + new(): ParaRedirigir
+    '+ aceptar(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+    '+ rechazar(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+}
+
+class RecibidaYRechazada <<state>> {
+    + new(): RecibidaYRechazada
+    '+ registrar(documentacion: Documentacion, fechaHoraActual: DateTime, cambiosEstado: CambioEstadoDocumentacion[], responsable: Empleado): void
+}
+
+class RecibidaYAceptada <<state>> {
+    + new(): RecibidaYAceptada
+}
+
+class DeBaja <<state>> {
+    + new(): DeBaja
+}
+
+' =========================================================
+' HERENCIA (ESTADOS CONCRETOS)
+' =========================================================
+
+
+' (nombre unificado con la secuencia: EnBolsinEnviado)
+EnBolsinEnviado -up-|> EstadoDocumentacion
+RecibidaYAceptada -up-|> EstadoDocumentacion
+RecibidaYRechazada --|> EstadoDocumentacion
+ParaRedirigir --|> EstadoDocumentacion
+NoRecibida -right-|> EstadoDocumentacion
+' agregadas: figuran en el diagrama de clases y no estaban en el bloque
+Registrada -left-|> EstadoDocumentacion
+EnRemito -up-|> EstadoDocumentacion
+EnBolsinSaliente -up-|> EstadoDocumentacion
+DeBaja --|> EstadoDocumentacion
+
+' =========================================================
+' RELACIONES
+' =========================================================
+
+' (gestor renombrado según la secuencia: GestorRegRecepBolsin)
+GestorRegRecepBolsin ..> Bolsin
+GestorRegRecepBolsin ..> Empleado 
+
+Bolsin --> "1..*" CambioEstadoBolsin : cambioEstado
+Bolsin o--> "1..*" Remito : remito
+CambioEstadoBolsin --> "1" Empleado : responsable
+CambioEstadoBolsin --> "1" EstadoBolsin : estado
+
+Remito --> "1" EstadoRemito : estado
+Remito o--> "1..*" DetalleRemito : detalleRemito
+
+DetalleRemito --> "1" Documentacion : documentacion
+
+Documentacion -down-> "1" EstadoDocumentacion : estadoActual
+Documentacion --> "1..*" CambioEstadoDocumentacion : cambioEstado
+CambioEstadoDocumentacion -down-> "1" EstadoDocumentacion : estado
+CambioEstadoDocumentacion --> "1" Empleado : responsable
+' agregadas: figuran en el diagrama de clases y no estaban en el bloque
+Documentacion --> "1" ComisionMedica : cmOrigen
+Documentacion --> "1" TipoDocumento : tipoDocumento
+
+EnBolsinEnviado ..> CambioEstadoDocumentacion
+EnBolsinEnviado ..> Documentacion
+EnBolsinEnviado ..> RecibidaYAceptada
+
+@enduml
